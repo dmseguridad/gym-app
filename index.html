@@ -3,44 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gym App</title>
-<meta name="description" content="Gestión de gimnasios: panel del administrador y app del socio.">
+<title>KadaMeta · Sistema para gimnasios</title>
+<meta name="description" content="KadaMeta: control de socios, pagos, clases y personal para tu gimnasio, más una app para tus socios con progreso diario, retos con premios y un avatar que sube de nivel.">
+<meta property="og:title" content="KadaMeta · Sistema para gimnasios">
+<meta property="og:description" content="Tus socios cumplen cada meta. Tu gimnasio retiene más socios.">
 <link rel="icon" href="shared/icon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#0e1014">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
 <link rel="stylesheet" href="shared/styles.css">
 <style>
-  .wrap { max-width: 860px; margin: 0 auto; padding: 48px 16px; }
-  .choose { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 28px; }
-  .choice { display: block; text-decoration: none; color: var(--text); transition: transform .15s, border-color .15s; }
-  .choice:hover { transform: translateY(-3px); border-color: var(--accent); }
-  .choice .ic { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: rgba(255, 107, 53, .14); color: var(--accent); margin-bottom: 14px; }
-  .choice ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: .9rem; }
-  .hero-t { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; letter-spacing: -.02em; margin: 14px 0 8px; }
+  body { background: var(--bg); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  .top { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.25rem; letter-spacing: -.02em; color: var(--text); text-decoration: none; }
+  .brand img { width: 36px; height: 36px; border-radius: 10px; }
+  .brand b { color: var(--accent); }
+  .hero { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: center; padding: 48px 0 56px; }
+  .hero h1 { font-size: clamp(2rem, 5.2vw, 3.3rem); font-weight: 900; letter-spacing: -.03em; line-height: 1.05; margin: 14px 0 16px; }
+  .hero h1 span { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p.lead { font-size: 1.12rem; color: var(--muted); max-width: 560px; }
+  .pill { display: inline-flex; gap: 8px; align-items: center; background: rgba(255, 107, 53, .12); color: var(--accent-2); border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: .82rem; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+  .ctas .btn { min-height: 50px; padding: 12px 20px; font-size: 1rem; border-radius: 14px; }
+  .btn-wa-solid { background: #25d366; border-color: #25d366; color: #062b14; }
+  .btn-wa-solid:hover { filter: brightness(1.05); border-color: #25d366; }
+  .phone { justify-self: center; width: 280px; border-radius: 36px; background: var(--surface); border: 1px solid var(--border); padding: 18px; box-shadow: 0 30px 80px rgba(255, 107, 53, .15), var(--shadow); }
+  .phone .av { display: flex; justify-content: center; }
+  .phone .av > div { border-radius: 24px; overflow: hidden; line-height: 0; }
+  .phone .row-mini { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); margin-top: 12px; }
+  .phone .reto-mini { background: var(--surface-2); border-radius: 14px; padding: 12px; margin-top: 12px; font-size: .85rem; }
+  section.block { padding: 56px 0; border-top: 1px solid var(--border); }
+  .kicker { color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .78rem; }
+  h2.big { font-size: clamp(1.5rem, 3.6vw, 2.2rem); font-weight: 900; letter-spacing: -.02em; margin: 8px 0 12px; }
+  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+  .feat .ic { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: rgba(255, 107, 53, .14); color: var(--accent); margin-bottom: 12px; }
+  .feat h3 { font-size: 1.05rem; margin: 0 0 6px; }
+  .feat p { color: var(--muted); margin: 0; font-size: .94rem; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+  .list { list-style: none; padding: 0; margin: 12px 0 0; }
+  .list li { padding: 9px 0 9px 30px; position: relative; border-bottom: 1px solid var(--border); }
+  .list li:last-child { border-bottom: 0; }
+  .list li::before { content: '✓'; position: absolute; left: 4px; color: var(--ok); font-weight: 800; }
+  .evo { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 26px; }
+  .evo figure { margin: 0; text-align: center; }
+  .evo figure > div { border-radius: 20px; overflow: hidden; line-height: 0; }
+  .evo figcaption { font-size: .82rem; color: var(--muted); margin-top: 8px; font-weight: 600; }
+  .sponsor-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 26px; counter-reset: s; }
+  .sponsor-flow .card { position: relative; padding-top: 34px; }
+  .sponsor-flow .card::before { counter-increment: s; content: counter(s); position: absolute; top: 12px; left: 18px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: grid; place-items: center; font-size: .8rem; }
+  .sponsor-flow p { margin: 0; color: var(--muted); font-size: .92rem; }
+  .demo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 26px; }
+  .demo a { text-decoration: none; color: var(--text); transition: transform .15s, border-color .15s; display: block; }
+  .demo a:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .cred { font-family: ui-monospace, Menlo, Consolas, monospace; background: var(--surface-2); padding: 2px 8px; border-radius: 6px; }
+  .final { text-align: center; background: radial-gradient(circle at 50% 0%, rgba(255, 107, 53, .22), transparent 60%), var(--surface); border-radius: 26px; border: 1px solid var(--border); padding: 44px 20px; margin: 56px 0; }
+  footer { border-top: 1px solid var(--border); padding: 22px 0 34px; color: var(--muted); font-size: .85rem; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; padding-top: 24px; gap: 32px; }
+    .three, .two, .demo { grid-template-columns: 1fr; }
+    .sponsor-flow { grid-template-columns: 1fr 1fr; }
+    .top .hide-sm { display: none; }
+  }
+  @media (max-width: 480px) { .sponsor-flow { grid-template-columns: 1fr; } .ctas .btn { width: 100%; } }
 </style>
 </head>
 <body>
-<div class="center-screen" style="display:block;padding:0">
-  <div class="wrap">
-    <span class="logo-box"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg></span>
-    <div class="hero-t">Gestión de gimnasio + app para tus socios</div>
-    <p class="muted">Versión de demostración. Abre el panel y la app del socio en dos pestañas: los cambios se sincronizan al instante.</p>
-    <div class="choose">
-      <a class="card choice" href="admin/">
-        <div class="ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></div>
-        <h2>Panel del gimnasio</h2>
-        <div class="muted small">Para el dueño y recepción · PIN demo: 1234</div>
-        <ul><li>Socios, pagos y vencimientos</li><li>Clases, horarios y personal</li><li>Asistencia y reportes</li><li>Recordatorios por WhatsApp</li></ul>
-      </a>
-      <a class="card choice" href="socio/">
-        <div class="ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></div>
-        <h2>App del socio</h2>
-        <div class="muted small">Demo: 0991234567 · PIN 1234</div>
-        <ul><li>Reserva de clases</li><li>Registro diario de avance</li><li>Meta y reporte del mes</li><li>Avatar que sube de nivel</li></ul>
-      </a>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><img src="shared/icon.svg" alt=""><span>Kada<b>Meta</b></span></a>
+    <div class="row">
+      <a class="btn hide-sm" href="#demo">Ver demo</a>
+      <a class="btn btn-primary wa-link" href="#" target="_blank" rel="noopener">Hablar por WhatsApp</a>
     </div>
-  </div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <span class="pill">🇪🇨 Hecho para gimnasios de Ecuador</span>
+      <h1>Tus socios cumplen <span>cada meta</span>.<br>Tu gimnasio retiene más.</h1>
+      <p class="lead">Controla socios, pagos, clases y personal desde un solo panel. Tus socios tienen su propia app para reservar, ver su avance día a día y ganar premios.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="#demo">Probar la demo</a>
+        <a class="btn btn-wa-solid wa-link" href="#" target="_blank" rel="noopener">Agendar una demo</a>
+      </div>
+      <p class="small muted" style="margin-top:14px">Sin instalar nada: funciona en celular, tablet y computadora.</p>
+    </div>
+    <div class="phone" aria-hidden="true">
+      <div class="row between"><strong>Hola, Mateo 👋</strong><span class="badge info">Nivel 4</span></div>
+      <div class="av" style="margin-top:12px"><div id="hero-av"></div></div>
+      <div class="row-mini"><span>Meta: bajar a 76 kg</span><strong style="color:var(--text)">72%</strong></div>
+      <div class="progress" style="margin-top:6px"><span style="width:72%"></span></div>
+      <div class="reto-mini"><strong>🎁 ¡Premio listo!</strong><div class="muted">Reto del mes · 10% de descuento</div></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker">El problema</div>
+    <h2 class="big">Cuaderno, Excel y WhatsApp no alcanzan</h2>
+    <p class="muted" style="max-width:640px">Pagos que se olvidan, clases desordenadas y socios que dejan de venir al segundo mes. KadaMeta resuelve las tres cosas.</p>
+    <div class="three">
+      <div class="card feat"><div class="ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg></div><h3>Cobros al día</h3><p>Ves quién vence y quién no pagó, registras pagos en segundos y envías recordatorios por WhatsApp con un clic.</p></div>
+      <div class="card feat"><div class="ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><h3>Clases ordenadas</h3><p>Horarios, cupos, reservas, entrenadores y asistencia con código. Sabes qué clases se llenan y a qué hora hay más gente.</p></div>
+      <div class="card feat"><div class="ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div><h3>Socios que vuelven</h3><p>Metas del mes, avance diario, retos con premios y un avatar que sube de nivel. Motivos reales para no abandonar.</p></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker">Dos apps, un sistema</div>
+    <h2 class="big">Todo conectado entre el gimnasio y sus socios</h2>
+    <div class="two">
+      <div class="card"><h3 style="margin:0">📊 Panel del gimnasio</h3><ul class="list">
+        <li>Socios, membresías, pagos y vencimientos</li>
+        <li>Recordatorios de pago por WhatsApp</li>
+        <li>Clases, horarios, cupos y personal</li>
+        <li>Asistencia con código del socio</li>
+        <li>Reportes: ingresos, horas pico, ocupación</li>
+        <li>Retos con patrocinadores y entrega de premios</li>
+      </ul></div>
+      <div class="card"><h3 style="margin:0">📱 App del socio</h3><ul class="list">
+        <li>Reserva de clases desde el celular</li>
+        <li>Registro diario de peso y ejercicios</li>
+        <li>Meta del mes con reporte de avance</li>
+        <li>Retos del mes y del año con premios</li>
+        <li>Avatar que evoluciona con su constancia</li>
+        <li>Se instala como app, sin tiendas</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="block" style="text-align:center">
+    <div class="kicker">Gamificación</div>
+    <h2 class="big">Mientras más entrena, más fuerte se ve su avatar</h2>
+    <p class="muted" style="max-width:600px;margin:0 auto">Cada entrada, cada registro y cada meta cumplida suma puntos. Los socios desbloquean accesorios y quieren llegar al siguiente nivel.</p>
+    <div class="evo" id="evo"></div>
+  </section>
+
+  <section class="block">
+    <div class="kicker">Retos con patrocinadores</div>
+    <h2 class="big">Los premios los pone un patrocinador, no tu gimnasio</h2>
+    <p class="muted" style="max-width:660px">Tiendas de suplementos, ropa deportiva o restaurantes saludables ofrecen premios a cambio de visibilidad frente a tus socios.</p>
+    <div class="sponsor-flow">
+      <div class="card"><strong>Creas el reto</strong><p>"Entrena 12 días este mes" con el logo del patrocinador.</p></div>
+      <div class="card"><strong>El socio lo cumple</strong><p>El avance se calcula solo con su asistencia y registros.</p></div>
+      <div class="card"><strong>Reclama su premio</strong><p>Recibe un código y lo canjea en recepción.</p></div>
+      <div class="card"><strong>Reporte al patrocinador</strong><p>Le envías cuántos socios participaron y ganaron.</p></div>
+    </div>
+  </section>
+
+  <section class="block" id="demo">
+    <div class="kicker">Pruébalo ahora</div>
+    <h2 class="big">Demo con datos de ejemplo</h2>
+    <p class="muted">Ábrelas en dos pestañas o en pantalla dividida: lo que haces en una aparece al instante en la otra.</p>
+    <div class="demo">
+      <a class="card" href="admin/"><h3 style="margin:0 0 6px">📊 Panel del gimnasio</h3><p class="muted small">Para el dueño y recepción</p><p class="small">PIN: <span class="cred">1234</span></p><span class="btn btn-primary btn-sm">Abrir panel →</span></a>
+      <a class="card" href="socio/"><h3 style="margin:0 0 6px">📱 App del socio</h3><p class="muted small">Lo que ven tus socios</p><p class="small">Celular: <span class="cred">0991234567</span> · PIN: <span class="cred">1234</span></p><span class="btn btn-primary btn-sm">Abrir app →</span></a>
+    </div>
+  </section>
+
+  <section class="final">
+    <h2 class="big" style="margin-top:0">¿Quieres KadaMeta en tu gimnasio?</h2>
+    <p class="muted" style="max-width:520px;margin:0 auto 22px">Te lo mostramos en tu propio gimnasio y lo configuramos con tus planes, clases y entrenadores.</p>
+    <a class="btn btn-wa-solid btn-lg wa-link" href="#" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
+  </section>
+
+  <footer><span><strong style="color:var(--text)">KadaMeta</strong> · Cada meta cuenta</span><span>Hecho en Ecuador 🇪🇨</span></footer>
 </div>
+<script src="shared/avatar.js"></script>
+<script>
+  const WA = 'https://wa.me/593980781862?text=' + encodeURIComponent('Hola, quiero conocer KadaMeta para mi gimnasio');
+  document.querySelectorAll('.wa-link').forEach(a => { a.href = WA; });
+  const look = { skin: '#f1c27d', hair: 'corto', hairColor: '#3b2314', shirt: '#ff6b35', accessory: 'ninguno' };
+  document.getElementById('hero-av').innerHTML = Avatar.svg({ ...look, accessory: 'medalla' }, 4, 170);
+  document.getElementById('evo').innerHTML = [[1, 'Novato', 'ninguno'], [3, 'Atleta', 'banda'], [4, 'Guerrero', 'medalla'], [6, 'Leyenda', 'corona']]
+    .map(([lv, name, acc]) => `<figure><div>${Avatar.svg({ ...look, accessory: acc }, lv, 120)}</div><figcaption>Nivel ${lv} · ${name}</figcaption></figure>`).join('');
+</script>
 </body>
 </html>

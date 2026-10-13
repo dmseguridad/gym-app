@@ -1,6 +1,6 @@
 {
-  "name": "Panel del Gimnasio",
-  "short_name": "Panel Gym",
+  "name": "KadaMeta · Panel del gimnasio",
+  "short_name": "KadaMeta Panel",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

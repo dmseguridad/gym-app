@@ -1,6 +1,6 @@
 {
-  "name": "Mi Gimnasio",
-  "short_name": "Mi Gym",
+  "name": "KadaMeta",
+  "short_name": "KadaMeta",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

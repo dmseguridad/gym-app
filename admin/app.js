@@ -46,6 +46,7 @@
         <nav class="nav" aria-label="Secciones">
           ${NAV.map(([k, l, i]) => `<a href="#/${k}" class="${k === page ? 'active' : ''}" ${k === page ? 'aria-current="page"' : ''}>${UI.icon(i, 18)}<span>${l}</span></a>`).join('')}
           <a href="#" class="logout" data-action="logout">${UI.icon('logout', 18)}<span>Salir</span></a>
+          <span class="hide-sm" style="margin-top:12px">${UI.poweredBy()}</span>
         </nav>
       </aside>
       <main class="main" id="main">${PAGES[page]()}</main>
@@ -61,6 +62,7 @@
       <div class="field"><label for="pin">PIN de administrador</label><input id="pin" name="pin" type="password" inputmode="numeric" autocomplete="current-password" required autofocus></div>
       <button class="btn btn-primary btn-block btn-lg">Entrar</button>
       <p class="muted small" style="text-align:center">Demo: PIN <strong>1234</strong></p>
+      ${UI.poweredBy()}
     </form></div>`;
   }
 

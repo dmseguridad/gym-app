@@ -167,3 +167,9 @@ tr.clickable:hover td { background: rgba(255, 255, 255, .02); }
 
 .chart { display: block; overflow: visible; }
 svg text { font-family: inherit; }
+
+/* Firma "con KadaMeta" */
+.powered { display: flex; align-items: center; justify-content: center; gap: 7px; color: var(--muted); text-decoration: none; font-size: .8rem; }
+.powered img { width: 18px; height: 18px; border-radius: 5px; }
+.powered strong { color: var(--text); }
+.powered:hover strong { color: var(--accent); }

@@ -39,6 +39,7 @@
       <div class="field"><label for="pin">PIN</label><input id="pin" name="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" required></div>
       <button class="btn btn-primary btn-block btn-lg">Entrar</button>
       <p class="muted small" style="text-align:center">¿No tienes PIN? Pídelo en recepción.<br>Demo: <strong>0991234567</strong> · PIN <strong>1234</strong></p>
+      ${UI.poweredBy()}
     </form></div>`;
   }
 
