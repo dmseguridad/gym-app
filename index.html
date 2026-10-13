@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gym App</title>
+<meta name="description" content="Gestión de gimnasios: panel del administrador y app del socio.">
+<link rel="icon" href="shared/icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0e1014">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="shared/styles.css">
+<style>
+  .wrap { max-width: 860px; margin: 0 auto; padding: 48px 16px; }
+  .choose { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 28px; }
+  .choice { display: block; text-decoration: none; color: var(--text); transition: transform .15s, border-color .15s; }
+  .choice:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .choice .ic { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: rgba(255, 107, 53, .14); color: var(--accent); margin-bottom: 14px; }
+  .choice ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: .9rem; }
+  .hero-t { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; letter-spacing: -.02em; margin: 14px 0 8px; }
+</style>
+</head>
+<body>
+<div class="center-screen" style="display:block;padding:0">
+  <div class="wrap">
+    <span class="logo-box"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg></span>
+    <div class="hero-t">Gestión de gimnasio + app para tus socios</div>
+    <p class="muted">Versión de demostración. Abre el panel y la app del socio en dos pestañas: los cambios se sincronizan al instante.</p>
+    <div class="choose">
+      <a class="card choice" href="admin/">
+        <div class="ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></div>
+        <h2>Panel del gimnasio</h2>
+        <div class="muted small">Para el dueño y recepción · PIN demo: 1234</div>
+        <ul><li>Socios, pagos y vencimientos</li><li>Clases, horarios y personal</li><li>Asistencia y reportes</li><li>Recordatorios por WhatsApp</li></ul>
+      </a>
+      <a class="card choice" href="socio/">
+        <div class="ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></div>
+        <h2>App del socio</h2>
+        <div class="muted small">Demo: 0991234567 · PIN 1234</div>
+        <ul><li>Reserva de clases</li><li>Registro diario de avance</li><li>Meta y reporte del mes</li><li>Avatar que sube de nivel</li></ul>
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "Mi Gimnasio",
+  "short_name": "Mi Gym",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e1014",
+  "theme_color": "#0e1014",
+  "lang": "es",
+  "icons": [{ "src": "../shared/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

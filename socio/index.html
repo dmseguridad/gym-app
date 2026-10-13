@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi Gimnasio</title>
+<meta name="description" content="Reserva tus clases, registra tu avance y mira tu progreso del mes.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="../shared/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../shared/icon.svg">
+<meta name="theme-color" content="#0e1014">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Gym">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../shared/styles.css">
+<style>
+  .m-app { max-width: 560px; margin: 0 auto; min-height: 100vh; }
+  .m-header { position: sticky; top: 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: calc(10px + env(safe-area-inset-top)) 16px 10px; background: rgba(14, 16, 20, .88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .m-header .logo-box { width: 32px; height: 32px; border-radius: 10px; }
+  .m-av { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid var(--border); padding: 0; background: none; cursor: pointer; line-height: 0; }
+  .m-av svg { width: 40px; height: auto; }
+  .m-main { padding: 16px 16px calc(100px + env(safe-area-inset-bottom)); }
+  .m-main > * + * { margin-top: 14px; }
+  .tabbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; display: flex; justify-content: center; background: rgba(23, 26, 33, .96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
+  .tabbar-inner { display: flex; width: 100%; max-width: 560px; }
+  .tabbar a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 2px 10px; color: var(--muted); text-decoration: none; font-size: .7rem; font-weight: 600; }
+  .tabbar a.active { color: var(--accent); }
+  .hero { display: flex; gap: 16px; align-items: center; background: linear-gradient(135deg, rgba(255, 107, 53, .2), rgba(255, 166, 43, .05) 60%), var(--surface); }
+  .hero-av { border-radius: 22px; overflow: hidden; line-height: 0; flex: none; }
+  .hero h1 { margin: 0 0 2px; font-size: 1.6rem; }
+  .lvl { font-weight: 700; color: var(--accent-2); font-size: .9rem; margin-bottom: 8px; }
+  .code-card { text-align: center; }
+  .code { font-size: 2.4rem; font-weight: 800; letter-spacing: .25em; margin: 4px 0; padding-left: .25em; }
+  .class-row { display: flex; gap: 12px; align-items: center; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--c); border-radius: 14px; }
+  .class-row + .class-row { margin-top: 10px; }
+  .class-row .time { font-weight: 800; font-size: 1.05rem; min-width: 52px; }
+  .class-row.mine { background: linear-gradient(90deg, rgba(255, 107, 53, .12), transparent 70%), var(--surface); }
+  .goal-row { display: flex; gap: 16px; align-items: center; }
+  .trio { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: 8px; margin: 14px 0 6px; }
+  .trio .v { font-size: 1.3rem; font-weight: 800; }
+  .trio .l { font-size: .74rem; color: var(--muted); font-weight: 600; }
+  .trio .arrow { color: var(--muted); }
+  .msg { font-weight: 700; font-size: 1.02rem; margin: 6px 0; }
+  .proj { background: var(--surface-2); border-radius: 12px; padding: 12px; font-size: .9rem; margin-top: 10px; }
+  .ex-row { display: grid; grid-template-columns: 1fr 74px 64px 34px; gap: 6px; margin-top: 8px; align-items: center; }
+  .ex-row input, .ex-row select { min-height: 42px; padding: 8px; }
+  .av-stage { display: flex; justify-content: center; margin-bottom: 6px; }
+  .av-stage > div { border-radius: 28px; overflow: hidden; line-height: 0; box-shadow: var(--shadow); }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opt { border: 2px solid var(--border); background: var(--surface-2); color: var(--text); border-radius: 12px; padding: 8px 12px; font: inherit; font-weight: 600; font-size: .85rem; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+  .opt.active { border-color: var(--accent); background: rgba(255, 107, 53, .14); }
+  .opt:disabled { opacity: .45; cursor: not-allowed; }
+  .swatch { width: 38px; height: 38px; padding: 0; border-radius: 50%; }
+  .ladder .list-item { padding: 9px 0; }
+  .ladder .done { color: var(--ok); }
+  .best-up { color: var(--ok); font-weight: 700; }
+  .celebrate { text-align: center; }
+  .celebrate .big { font-size: 3.5rem; line-height: 1; margin: 10px 0; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="../shared/avatar.js"></script>
+<script src="../shared/store.js"></script>
+<script src="../shared/ui.js"></script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js').catch(() => {});
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel del Gimnasio</title>
+<meta name="description" content="Administración de socios, pagos, clases, personal y asistencia.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="../shared/icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#171a21">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Panel Gym">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../shared/styles.css">
+<style>
+  .layout { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; }
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 18px 12px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; }
+  .brand { font-weight: 800; font-size: 1.05rem; padding: 4px 8px 20px; display: flex; gap: 10px; align-items: center; }
+  .brand .logo-box { width: 36px; height: 36px; border-radius: 11px; }
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav a { display: flex; gap: 11px; align-items: center; padding: 10px 12px; border-radius: 11px; color: var(--muted); text-decoration: none; font-weight: 600; }
+  .nav a:hover { background: var(--surface-2); color: var(--text); }
+  .nav a.active { background: rgba(255, 107, 53, .12); color: var(--accent); }
+  .nav .logout { margin-top: auto; }
+  .main { padding: 28px; width: 100%; max-width: 1240px; min-width: 0; }
+  .week { display: grid; grid-template-columns: repeat(7, minmax(140px, 1fr)); gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+  .day-col { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px; min-height: 160px; }
+  .day-col.today { border-color: var(--accent); }
+  .day-head { font-weight: 700; font-size: .85rem; margin: 2px 4px 10px; display: flex; justify-content: space-between; }
+  .class-card { width: 100%; text-align: left; background: var(--surface-2); border: 0; border-left: 4px solid var(--c); color: var(--text); border-radius: 10px; padding: 9px 10px; margin-bottom: 8px; cursor: pointer; font: inherit; }
+  .class-card:hover { filter: brightness(1.12); }
+  .class-card .time { font-size: .78rem; color: var(--muted); font-weight: 600; }
+  .class-card .name { font-weight: 700; }
+  .staff-card { display: flex; gap: 14px; align-items: flex-start; }
+  .checkin-box { display: flex; gap: 10px; flex-wrap: wrap; }
+  .checkin-box input { font-size: 1.15rem; min-height: 52px; flex: 1; min-width: 220px; }
+  .checkin-box .btn { min-height: 52px; }
+  .actions { white-space: nowrap; text-align: right; }
+  .toolbar { gap: 12px; margin-bottom: 8px; }
+  .toolbar input { max-width: 340px; }
+  .goal-cell { min-width: 120px; }
+  .det-head { display: flex; gap: 16px; align-items: center; margin-bottom: 14px; }
+  .det-head .av { border-radius: 18px; overflow: hidden; flex: none; line-height: 0; }
+  .plan-row td input { min-height: 38px; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    .toolbar input { max-width: none; }
+    .actions .btn { padding: 5px 8px; }
+    .sidebar { height: auto; position: sticky; top: 0; z-index: 20; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--border); }
+    .brand { padding: 2px 4px 10px; }
+    .nav { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav a { white-space: nowrap; padding: 8px 11px; }
+    .nav .logout { margin-top: 0; }
+    .main { padding: 18px 16px 40px; }
+    .week { grid-template-columns: 1fr; overflow: visible; }
+    .day-col { min-height: 0; }
+    .hide-sm { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="../shared/avatar.js"></script>
+<script src="../shared/store.js"></script>
+<script src="../shared/ui.js"></script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js').catch(() => {});
+</script>
+</body>
+</html>
