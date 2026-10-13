@@ -142,6 +142,7 @@ tr.clickable:hover td { background: rgba(255, 255, 255, .02); }
 .toast.bad { border-left-color: var(--bad); }
 .toast.warn { border-left-color: var(--warn); }
 .alert { border-radius: 14px; padding: 12px 14px; font-weight: 600; font-size: .9rem; }
+.alert.ok { background: rgba(61, 220, 151, .12); color: var(--ok); }
 .alert.warn { background: rgba(255, 193, 69, .12); color: var(--warn); }
 .alert.bad { background: rgba(255, 90, 95, .12); color: var(--bad); }
 @keyframes fade { from { opacity: 0; } }
@@ -153,6 +154,12 @@ tr.clickable:hover td { background: rgba(255, 255, 255, .02); }
 .login-card { width: 100%; max-width: 380px; padding: 26px; }
 .brand-lg { display: flex; gap: 12px; align-items: center; margin-bottom: 6px; }
 .brand-lg h1 { margin: 0; }
+.sponsor-ini { display: grid; place-items: center; border-radius: 12px; color: #111; font-weight: 800; flex: none; }
+.reto { border-left: 4px solid var(--c, var(--accent)); }
+.reto-head { display: flex; gap: 12px; align-items: center; }
+.reto-prize { display: flex; gap: 8px; align-items: center; background: var(--surface-2); border-radius: 12px; padding: 10px 12px; margin: 12px 0; font-size: .9rem; }
+.reto-prize strong { color: var(--accent-2); }
+.claim-code { font-size: 1.6rem; font-weight: 800; letter-spacing: .12em; text-align: center; background: var(--surface-2); border: 2px dashed var(--accent); border-radius: 14px; padding: 10px; margin-top: 10px; }
 .logo-img { border-radius: 12px; object-fit: contain; background: #fff; padding: 2px; flex: none; display: block; }
 .photo-lg { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid var(--accent); }
 .photo-lg img, .photo-lg svg { width: 120px !important; height: auto; display: block; }

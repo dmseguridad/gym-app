@@ -6,7 +6,10 @@
   const st = { day: U.today(), metric: null, month: U.month(U.today()) };
   let me = null;
 
-  const TABS = [['inicio', 'Inicio', 'home'], ['reservar', 'Reservar', 'calendar'], ['progreso', 'Progreso', 'trend'], ['mes', 'Mi mes', 'trophy'], ['avatar', 'Avatar', 'user']];
+  const TABS = [['inicio', 'Inicio', 'home'], ['reservar', 'Reservar', 'calendar'], ['progreso', 'Progreso', 'trend'], ['mes', 'Mi mes', 'chart'], ['retos', 'Retos', 'trophy'], ['avatar', 'Avatar', 'user']];
+  // Retos completados cuyo premio aún se puede reclamar
+  const claimable = () => GymDB.currentChallenges().filter(c =>
+    !GymDB.memberClaim(me.id, c.id) && GymDB.prizesLeft(c) !== 0 && GymDB.challengeProgress(me, c).done);
   const route = () => (location.hash.replace(/^#\/?/, '') || 'inicio');
   const staffName = id => (GymDB.staffMember(id) || {}).name || '';
   const modalHead = title => `<div class="modal-head"><h2>${title}</h2><button class="icon-btn" data-action="close" aria-label="Cerrar">${UI.icon('close', 20)}</button></div>`;
@@ -23,7 +26,7 @@
       <header class="m-header"><div class="row">${UI.logo(32)}<strong>${esc(GymDB.settings.gymName)}</strong></div>
         <button class="m-av" data-action="profile" aria-label="Mi perfil">${Avatar.face(me, lv.level, 40)}</button></header>
       <main class="m-main">${PAGES[page]()}</main>
-      <nav class="tabbar" aria-label="Secciones"><div class="tabbar-inner">${TABS.map(([k, l, i]) => `<a href="#/${k}" class="${k === page ? 'active' : ''}" ${k === page ? 'aria-current="page"' : ''}>${UI.icon(i, 22)}<span>${l}</span></a>`).join('')}</div></nav>
+      <nav class="tabbar" aria-label="Secciones"><div class="tabbar-inner">${TABS.map(([k, l, i]) => `<a href="#/${k}" class="${k === page ? 'active' : ''}" ${k === page ? 'aria-current="page"' : ''}>${UI.icon(i, 22)}<span>${l}</span>${k === 'retos' && claimable().length ? '<span class="tab-dot" aria-label="Premio disponible"></span>' : ''}</a>`).join('')}</div></nav>
     </div>`;
     if (render.lastPage === page) window.scrollTo(0, scroll); else window.scrollTo(0, 0);
     render.lastPage = page;
@@ -52,6 +55,43 @@
     if (gp.pct >= 0.3) return 'Buen avance. Un empujón más cada semana 💪';
     return 'Recién empiezas: la constancia hace la diferencia.';
   }
+  // Tarjeta del reto más cercano a completarse (o con premio listo) en el inicio
+  function retoTeaser() {
+    const ranked = GymDB.currentChallenges().filter(c => !GymDB.memberClaim(me.id, c.id) && GymDB.prizesLeft(c) !== 0)
+      .map(c => ({ c, p: GymDB.challengeProgress(me, c) }))
+      .sort((a, b) => (b.p.done - a.p.done) || (b.p.pct - a.p.pct));
+    if (!ranked.length) return '';
+    const { c, p } = ranked[0];
+    return `<a class="card reto teaser" href="#/retos" style="--c:${c.color}">
+      <div class="reto-head">${UI.sponsor(c, 40)}<div class="grow">
+        <div class="small ${p.done ? '' : 'muted'}" ${p.done ? 'style="color:var(--ok);font-weight:700"' : ''}>${p.done ? '🎁 ¡Tu premio está listo!' : `Reto ${c.period === 'año' ? 'del año' : 'del mes'}`}</div>
+        <strong>${esc(c.title)}</strong><div class="small muted">Premio: ${esc(c.reward)}</div></div><span class="muted" aria-hidden="true">›</span></div>
+      <div class="row" style="margin-top:10px"><div class="grow">${UI.progress(p.pct)}</div><span class="small nowrap">${Math.min(p.value, c.target)}/${c.target}</span></div></a>`;
+  }
+
+  function retoCard(c) {
+    const p = GymDB.challengeProgress(me, c);
+    const cl = GymDB.memberClaim(me.id, c.id);
+    const left = GymDB.prizesLeft(c);
+    const unit = GymDB.CHALLENGE_METRICS[c.metric].unit;
+    const daysLeft = U.diffDays(U.today(), GymDB.challengeEnd(c));
+    let action;
+    if (cl) action = cl.status === 'entregado'
+      ? `<div class="alert ok">✓ Premio entregado el ${U.fmtDate(cl.deliveredDate || cl.date, { day: 'numeric', month: 'long' })}</div>`
+      : `<div class="small muted" style="text-align:center">Muestra este código en recepción</div><div class="claim-code">${cl.code}</div>`;
+    else if (p.done && left === 0) action = '<span class="badge bad">Premios agotados</span>';
+    else if (p.done) action = `<button class="btn btn-primary btn-block" data-action="claim" data-id="${c.id}">🎁 Reclamar mi premio</button>`;
+    else action = `<div class="small muted">Te ${c.target - p.value === 1 ? 'falta' : 'faltan'} <strong style="color:var(--text)">${c.target - p.value} ${unit}</strong> · ${daysLeft === 0 ? 'termina hoy' : `quedan ${daysLeft} días`}${left !== null ? ` · ${left} ${left === 1 ? 'premio disponible' : 'premios disponibles'}` : ''}</div>`;
+    return `<section class="card reto ${c.period === 'año' ? 'reto-year' : ''}" style="--c:${c.color}">
+      <div class="reto-head">${UI.sponsor(c, 46)}<div class="grow"><strong>${esc(c.title)}</strong><div class="small muted">Patrocinado por ${esc(c.sponsor)}</div></div>
+        ${p.done ? '<span class="badge ok">¡Completado!</span>' : ''}</div>
+      ${c.description ? `<p class="small" style="margin:10px 0 0">${esc(c.description)}</p>` : ''}
+      <div class="reto-prize">🎁 <span>Premio: <strong>${esc(c.reward)}</strong></span></div>
+      <div class="row"><div class="grow">${UI.progress(p.pct)}</div><span class="small nowrap"><strong>${Math.min(p.value, c.target)}</strong>/${c.target} ${unit}</span></div>
+      <div style="margin-top:12px">${action}</div>
+    </section>`;
+  }
+
   const mini = (label, value) => `<div class="mini-stat"><div class="value">${value}</div><div class="label">${label}</div></div>`;
 
   /* ---------------- Páginas ---------------- */
@@ -82,6 +122,7 @@
             <a class="small" href="#/mes">Ver mi avance del mes →</a></div></div>`
         : `<p class="muted">Define qué quieres lograr este mes y te mostraremos tu avance día a día.</p><button class="btn btn-primary" data-action="goal">Definir mi meta</button>`}
       </section>
+      ${retoTeaser()}
       <button class="btn btn-primary btn-block btn-lg" data-action="log">${todayLog ? `${UI.icon('edit', 18)} Editar mi registro de hoy` : `${UI.icon('plus', 20)} Registrar mi entrenamiento de hoy`}</button>
       <section class="card"><div class="row between"><h2>Próximas clases</h2><a href="#/reservar" class="small">Reservar</a></div>
         ${up.length ? up.map(bookingItem).join('') : '<p class="muted small" style="margin:0">No tienes clases reservadas.</p>'}
@@ -186,6 +227,23 @@
       ${prevGoal && st.month === cur ? `<section class="card"><div class="row between"><div><div class="muted small">Mes anterior</div><strong>${esc(GymDB.goalLabel(prevGoal.goal))}</strong></div>${prevGoal.pct >= 1 ? '<span class="badge ok">🏆 Cumplida</span>' : `<span class="badge warn">${Math.round(prevGoal.pct * 100)}%</span>`}</div></section>` : ''}`;
     },
 
+    retos() {
+      const cur = GymDB.currentChallenges();
+      const year = cur.filter(c => c.period === 'año'), month = cur.filter(c => c.period === 'mes');
+      const mine = GymDB.memberClaims(me.id);
+      return `
+      <h1>Retos y premios</h1>
+      <p class="muted small" style="margin-top:-4px">Completa retos, reclama tu premio y muéstralo en recepción. Cada reto completado suma <strong>+${GymDB.POINTS.reto} pts</strong>.</p>
+      ${year.length ? `<h2>🏆 Gran reto del año</h2>${year.map(retoCard).join('')}` : ''}
+      <h2>Retos de ${U.monthName(U.month(U.today()))}</h2>
+      ${month.length ? month.map(retoCard).join('') : '<div class="card empty">Este mes aún no hay retos. ¡Pronto!</div>'}
+      ${mine.length ? `<section class="card"><h2>Mis premios</h2>${mine.map(x => {
+        const c = GymDB.challenge(x.challengeId); if (!c) return '';
+        return `<div class="list-item">${UI.sponsor(c, 34)}<div class="grow"><strong>${esc(c.reward)}</strong><div class="small muted">${esc(c.title)} · ${U.fmtDate(x.date)}</div></div>
+          ${x.status === 'entregado' ? '<span class="badge ok">Entregado</span>' : `<span class="badge warn">${x.code}</span>`}</div>`;
+      }).join('')}</section>` : ''}`;
+    },
+
     avatar() {
       const lv = GymDB.level(me), a = me.avatar || {};
       const O = Avatar.OPTIONS, L = Avatar.LABELS;
@@ -212,6 +270,7 @@
         <div class="list-item"><span class="grow">Entrada registrada en el gimnasio</span><strong>+${GymDB.POINTS.checkin}</strong></div>
         <div class="list-item"><span class="grow">Registrar tu entrenamiento del día</span><strong>+${GymDB.POINTS.log}</strong></div>
         <div class="list-item"><span class="grow">Cumplir tu meta del mes</span><strong>+${GymDB.POINTS.goal}</strong></div>
+        <div class="list-item"><span class="grow">Completar un reto con premio</span><strong>+${GymDB.POINTS.reto}</strong></div>
       </section>
       <section class="card ladder"><h2>Niveles</h2>
         ${GymDB.LEVELS.map((l, i) => `<div class="list-item"><span class="${lv.level > i ? 'done' : 'muted'}">${lv.level > i ? '✓' : '○'}</span><span class="grow"><strong>${i + 1}. ${l.name}</strong></span><span class="small muted">${l.min} pts</span></div>`).join('')}
@@ -307,6 +366,13 @@
   const ACTIONS = {
     close: () => UI.closeModal(),
     profile: () => profileModal(),
+    claim(d) {
+      const r = GymDB.claim(me.id, d.id);
+      if (!r.ok) { UI.toast(r.error, 'bad'); return; }
+      const c = GymDB.challenge(d.id);
+      render();
+      celebrate('¡Premio desbloqueado!', `Muestra el código <strong>${r.claim.code}</strong> en recepción para recibir: ${esc(c.reward)}. Ganaste +${GymDB.POINTS.reto} pts.`, '🎁');
+    },
     async 'upload-photo'() {
       try {
         const img = await UI.pickImage({ max: 320, square: true });

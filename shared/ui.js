@@ -94,6 +94,11 @@
         input.click();
       });
     },
+    // Logo del patrocinador de un reto, o sus iniciales en el color del reto
+    sponsor(c, size = 40) {
+      if (c.sponsorLogo) return `<img class="logo-img" src="${c.sponsorLogo}" alt="${U.esc(c.sponsor)}" style="width:${size}px;height:${size}px">`;
+      return `<span class="sponsor-ini" style="width:${size}px;height:${size}px;background:${c.color || 'var(--accent)'};font-size:${Math.round(size * 0.36)}px">${U.esc(U.initials(c.sponsor || 'R'))}</span>`;
+    },
     // Logo del gimnasio (el que sube el administrador) o el ícono por defecto
     logo(size = 36) {
       const l = GymDB.settings.logo;

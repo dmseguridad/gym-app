@@ -8,7 +8,7 @@
 
   const NAV = [
     ['inicio', 'Inicio', 'home'], ['socios', 'Socios', 'users'], ['clases', 'Clases', 'calendar'],
-    ['personal', 'Personal', 'badge'], ['asistencia', 'Asistencia', 'check'], ['reportes', 'Reportes', 'chart'],
+    ['personal', 'Personal', 'badge'], ['asistencia', 'Asistencia', 'check'], ['retos', 'Retos', 'trophy'], ['reportes', 'Reportes', 'chart'],
     ['ajustes', 'Ajustes', 'settings'],
   ];
   const FILTERS = { todos: 'Todos', activo: 'Activos', por_vencer: 'Por vencer', vencido: 'Vencidos' };
@@ -190,6 +190,39 @@
       </section>`;
     },
 
+    retos() {
+      const cur = GymDB.currentChallenges();
+      const all = GymDB.claims();
+      const pending = all.filter(x => x.status === 'pendiente');
+      const delivered = all.filter(x => x.status === 'entregado');
+      const active = GymDB.members().filter(m => GymDB.status(m).key !== 'vencido');
+      const participating = active.filter(m => cur.some(c => GymDB.challengeProgress(m, c).value > 0)).length;
+      const past = GymDB.challenges().filter(c => !cur.includes(c)).sort((a, b) => b.key.localeCompare(a.key));
+      return `
+      <div class="page-head"><div><h1>Retos y premios</h1><div class="muted">Retos con patrocinador para motivar a tus socios</div></div>
+        <button class="btn btn-primary" data-action="new-challenge">${UI.icon('plus', 18)} Nuevo reto</button></div>
+      <div class="grid g4">
+        ${stat('Retos activos', cur.length, `${cur.filter(c => c.period === 'año').length} anual · ${cur.filter(c => c.period === 'mes').length} del mes`)}
+        ${stat('Socios participando', participating, `de ${active.length} socios activos`)}
+        ${stat('Premios por entregar', pending.length, 'esperando en recepción', pending.length ? 'warn' : '')}
+        ${stat('Premios entregados', delivered.length, 'en total', 'ok')}
+      </div>
+      <section class="card mt"><h2>Entregar premio</h2>
+        <p class="muted small">El socio muestra su código en la app (ej. R-7K2P).</p>
+        <form data-form="deliver" class="checkin-box" autocomplete="off">
+          <input name="code" placeholder="Código del premio" required aria-label="Código del premio" style="text-transform:uppercase">
+          <button class="btn btn-primary">Buscar</button>
+        </form>
+        ${pending.length ? `<div class="table-wrap mt"><table><thead><tr><th>Socio</th><th>Premio</th><th>Código</th><th class="hide-sm">Fecha</th><th></th></tr></thead><tbody>
+          ${pending.map(x => { const m = GymDB.member(x.memberId), c = GymDB.challenge(x.challengeId); if (!m || !c) return ''; return `<tr><td><div class="row">${avatarMini(m)}<strong>${esc(m.name)}</strong></div></td><td><div>${esc(c.reward)}</div><div class="small muted">${esc(c.title)} · ${esc(c.sponsor)}</div></td><td class="nowrap"><strong>${x.code}</strong></td><td class="hide-sm nowrap">${U.fmtDate(x.date)}</td><td class="actions"><button class="btn btn-sm btn-primary" data-action="deliver" data-id="${x.id}">Entregar</button></td></tr>`; }).join('')}
+        </tbody></table></div>` : '<div class="empty">No hay premios pendientes</div>'}
+      </section>
+      <div class="grid g2 mt">${cur.map(c => challengeCard(c, active)).join('') || '<div class="card empty">No hay retos activos. Crea el primero.</div>'}</div>
+      ${past.length ? `<section class="card mt"><h2>Retos anteriores</h2>
+        ${past.map(c => `<div class="list-item clickable" data-action="edit-challenge" data-id="${c.id}">${UI.sponsor(c, 34)}<div class="grow"><strong>${esc(c.title)}</strong><div class="small muted">${esc(GymDB.periodLabel(c))} · ${esc(c.sponsor)}</div></div><span class="small muted">${GymDB.claimsFor(c.id).length} premios</span></div>`).join('')}
+      </section>` : ''}`;
+    },
+
     reportes() {
       const rbm = GymDB.revenueByMonth(6);
       const total = rbm.reduce((a, r) => a + r.value, 0);
@@ -289,6 +322,107 @@
         </tr>`;
       }).join('')}
     </tbody></table></div>`;
+  }
+
+  function challengeStats(c, members) {
+    const prog = members.map(m => GymDB.challengeProgress(m, c));
+    const claims = GymDB.claimsFor(c.id);
+    return {
+      reach: members.length,
+      active: prog.filter(p => p.value > 0).length,
+      done: prog.filter(p => p.done).length,
+      claims: claims.length,
+      delivered: claims.filter(x => x.status === 'entregado').length,
+    };
+  }
+
+  function challengeCard(c, members) {
+    const s = challengeStats(c, members);
+    const left = GymDB.prizesLeft(c);
+    const metric = GymDB.CHALLENGE_METRICS[c.metric];
+    return `<section class="card reto" style="--c:${c.color}">
+      <div class="reto-head">${UI.sponsor(c, 46)}
+        <div class="grow"><div class="small muted">${c.period === 'año' ? 'Reto anual' : 'Reto del mes'} · ${esc(GymDB.periodLabel(c))}</div>
+          <strong>${esc(c.title)}</strong><div class="small muted">Patrocina: ${esc(c.sponsor)}</div></div>
+        <button class="icon-btn" data-action="edit-challenge" data-id="${c.id}" aria-label="Editar reto">${UI.icon('edit', 18)}</button></div>
+      <div class="small" style="margin-top:10px">${esc(c.description || '')} <span class="muted">(${metric.label}: ${c.target} ${metric.unit})</span></div>
+      <div class="reto-prize">🎁 <span>Premio: <strong>${esc(c.reward)}</strong></span></div>
+      <div class="grid g3">
+        <div class="mini-stat"><div class="value">${s.active}</div><div class="label">Participando</div></div>
+        <div class="mini-stat"><div class="value">${s.done}</div><div class="label">Completaron</div></div>
+        <div class="mini-stat"><div class="value">${s.claims}${c.limit ? `<span class="small muted">/${c.limit}</span>` : ''}</div><div class="label">Premios</div></div>
+      </div>
+      <div class="row between wrap mt"><span class="small muted">${left === null ? 'Premios sin límite' : left === 0 ? 'Premios agotados' : `Quedan ${left} premios`} · termina el ${U.fmtDate(GymDB.challengeEnd(c), { day: 'numeric', month: 'short' })}</span>
+        <button class="btn btn-sm" data-action="sponsor-report" data-id="${c.id}">${UI.icon('chart', 15)} Reporte para patrocinador</button></div>
+    </section>`;
+  }
+
+  function sponsorReport(id) {
+    const c = GymDB.challenge(id);
+    const members = GymDB.members().filter(m => GymDB.status(m).key !== 'vencido');
+    const s = challengeStats(c, members);
+    const gym = GymDB.settings.gymName;
+    const text = `📊 Reporte del reto "${c.title}" – ${GymDB.periodLabel(c)}
+Gimnasio: ${gym}
+Patrocinador: ${c.sponsor}
+Premio: ${c.reward}
+
+• Socios activos con tu marca en su app: ${s.reach}
+• Socios que participaron: ${s.active}
+• Socios que completaron el reto: ${s.done}
+• Premios reclamados: ${s.claims}
+• Premios entregados: ${s.delivered}
+
+¡Gracias por motivar a nuestra comunidad! 💪`;
+    UI.modal(`${modalHead('Reporte para el patrocinador')}
+      <p class="muted small">Envíaselo al patrocinador para mostrarle el alcance de su marca. Te ayuda a renovar o vender el próximo reto.</p>
+      <div class="note" style="white-space:pre-wrap">${esc(text)}</div>
+      <div class="modal-actions"><button class="btn" data-action="copy-report">Copiar texto</button>
+        <a class="btn btn-wa" href="https://wa.me/?text=${encodeURIComponent(text)}" target="_blank" rel="noopener">${UI.icon('whatsapp', 16)} Enviar por WhatsApp</a></div>`,
+      root => { root.querySelector('[data-action="copy-report"]').dataset.text = text; });
+  }
+
+  function challengeForm(id) {
+    const c = id ? GymDB.challenge(id) : null;
+    const today = U.today();
+    const isYear = c ? c.period === 'año' : false;
+    UI.modal(`${modalHead(c ? 'Editar reto' : 'Nuevo reto')}
+      <form data-form="challenge" class="stack">
+        <input type="hidden" name="id" value="${c ? c.id : ''}">
+        <input type="hidden" name="sponsorLogo" value="${c && c.sponsorLogo ? c.sponsorLogo : ''}">
+        <div class="form-grid">
+          <div class="field"><label for="chp">Tipo</label><select id="chp" name="period"><option value="mes" ${!isYear ? 'selected' : ''}>Reto del mes</option><option value="año" ${isYear ? 'selected' : ''}>Reto anual</option></select></div>
+          <div class="field" id="ch-month"><label for="chm">Mes</label><input id="chm" type="month" name="month" value="${c && !isYear ? c.key : U.month(today)}"></div>
+          <div class="field" id="ch-year"><label for="chy">Año</label><input id="chy" type="number" name="year" min="2024" max="2100" value="${c && isYear ? c.key : today.slice(0, 4)}"></div>
+          <div class="field" style="grid-column:1/-1"><label for="cht">Nombre del reto</label><input id="cht" name="title" value="${esc(c ? c.title : '')}" placeholder="Ej. Octubre constante" required></div>
+          <div class="field" style="grid-column:1/-1"><label for="chd">Descripción para el socio</label><input id="chd" name="description" value="${esc(c ? c.description : '')}" placeholder="Ej. Entrena al menos 12 días este mes"></div>
+          <div class="field"><label for="chme">Qué se mide</label><select id="chme" name="metric">${Object.entries(GymDB.CHALLENGE_METRICS).map(([k, v]) => `<option value="${k}" ${c && c.metric === k ? 'selected' : ''}>${v.label}</option>`).join('')}</select></div>
+          <div class="field"><label for="chta">Objetivo</label><input id="chta" type="number" name="target" min="1" value="${c ? c.target : 12}" required></div>
+          <div class="field" style="grid-column:1/-1"><label for="chr">Premio</label><input id="chr" name="reward" value="${esc(c ? c.reward : '')}" placeholder="Ej. Batido de proteína gratis" required></div>
+          <div class="field"><label for="chs">Patrocinador</label><input id="chs" name="sponsor" value="${esc(c ? c.sponsor : '')}" placeholder="Ej. Tienda de suplementos" required></div>
+          <div class="field"><label for="chl">Cantidad de premios</label><input id="chl" type="number" name="limit" min="0" value="${c ? c.limit : 20}"><span class="small muted">0 = sin límite (para los primeros que completen)</span></div>
+          <div class="field"><label>Logo del patrocinador</label><div class="row"><span id="ch-logo-prev">${UI.sponsor(c || { sponsor: 'P', color: '#ff6b35' }, 40)}</span><button type="button" class="btn btn-sm" id="ch-logo-btn">Subir logo</button></div></div>
+          <div class="field"><label for="chc">Color</label><input id="chc" type="color" name="color" value="${c ? c.color : '#ff6b35'}"></div>
+        </div>
+        <div class="modal-actions">${c ? `<button type="button" class="btn btn-danger" data-action="delete-challenge" data-id="${c.id}">${UI.icon('trash', 16)} Eliminar</button><span class="spacer"></span>` : ''}
+          <button type="button" class="btn" data-action="close">Cancelar</button><button class="btn btn-primary">Guardar reto</button></div>
+      </form>`, root => {
+      const per = root.querySelector('#chp');
+      const toggle = () => {
+        const y = per.value === 'año';
+        root.querySelector('#ch-month').style.display = y ? 'none' : '';
+        root.querySelector('#ch-year').style.display = y ? '' : 'none';
+      };
+      per.addEventListener('change', toggle); toggle();
+      root.querySelector('#ch-logo-btn').addEventListener('click', async () => {
+        try {
+          const img = await UI.pickImage({ max: 160, type: 'image/png' });
+          if (!img) return;
+          root.querySelector('[name=sponsorLogo]').value = img;
+          root.querySelector('#ch-logo-prev').innerHTML = UI.sponsor({ sponsorLogo: img, sponsor: '' }, 40);
+        } catch (e) { UI.toast(e.message, 'bad'); }
+      });
+    });
   }
 
   /* ---------------- Modales ---------------- */
@@ -464,6 +598,23 @@
     'edit-plan': d => planForm(d.id),
     'delete-plan'(d) { GymDB.removePlan(d.id); UI.closeModal(); UI.toast('Plan eliminado'); render(); },
     'checkin-member': d => doCheckin(d.id),
+    'new-challenge': () => challengeForm(),
+    'edit-challenge': d => challengeForm(d.id),
+    'delete-challenge'(d) {
+      if (!confirm('¿Eliminar este reto? También se borran sus premios reclamados.')) return;
+      GymDB.removeChallenge(d.id); UI.closeModal(); UI.toast('Reto eliminado'); render();
+    },
+    'sponsor-report': d => sponsorReport(d.id),
+    async 'copy-report'(d) {
+      try { await navigator.clipboard.writeText(d.text); UI.toast('Reporte copiado'); }
+      catch (e) { UI.toast('No se pudo copiar; selecciona el texto manualmente', 'bad'); }
+    },
+    deliver(d) {
+      const x = GymDB.claims().find(c => c.id === d.id);
+      const m = GymDB.member(x.memberId), c = GymDB.challenge(x.challengeId);
+      if (!confirm(`¿Entregar "${c.reward}" a ${m.name}? (código ${x.code})`)) return;
+      GymDB.deliverClaim(x.id); UI.toast(`✓ Premio entregado a ${m.name}`); render();
+    },
     async 'upload-logo'() {
       try {
         const img = await UI.pickImage({ max: 256, type: 'image/png' });
@@ -521,6 +672,24 @@
     plan(d) {
       GymDB.savePlan({ id: d.id || undefined, name: d.name.trim(), price: +d.price, days: +d.days });
       UI.closeModal(); UI.toast('Plan guardado'); render();
+    },
+    challenge(d) {
+      const key = d.period === 'año' ? String(d.year) : d.month;
+      if (d.period === 'año' ? !/^\d{4}$/.test(key) : !/^\d{4}-\d{2}$/.test(key)) { UI.toast('Elige el mes o el año del reto', 'bad'); return; }
+      GymDB.saveChallenge({
+        id: d.id || undefined, period: d.period, key, title: d.title.trim(), description: d.description.trim(),
+        metric: d.metric, target: +d.target, reward: d.reward.trim(), sponsor: d.sponsor.trim(),
+        sponsorLogo: d.sponsorLogo || null, limit: Math.max(0, +d.limit || 0), color: d.color,
+      });
+      UI.closeModal(); UI.toast('Reto guardado'); render();
+    },
+    deliver(d, form) {
+      const x = GymDB.findClaim(d.code);
+      if (!x) { UI.toast('No existe un premio con ese código', 'bad'); return; }
+      const m = GymDB.member(x.memberId), c = GymDB.challenge(x.challengeId);
+      if (x.status === 'entregado') { UI.toast(`Ese premio ya se entregó el ${U.fmtDate(x.deliveredDate || x.date)}`, 'warn'); return; }
+      if (!confirm(`¿Entregar "${c.reward}" a ${m.name}?`)) return;
+      GymDB.deliverClaim(x.id); form.reset(); UI.toast(`✓ Premio entregado a ${m.name}`); render();
     },
     settings(d) { GymDB.saveSettings({ gymName: d.gymName.trim(), adminPin: d.adminPin }); UI.toast('Ajustes guardados'); render(); },
     checkin(d, form) {

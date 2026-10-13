@@ -41,9 +41,29 @@
     { min: 900, name: 'Élite' },
     { min: 1400, name: 'Leyenda' },
   ];
-  const POINTS = { checkin: 10, log: 5, goal: 100 };
+  const POINTS = { checkin: 10, log: 5, goal: 100, reto: 50 };
   const EXERCISES = ['Sentadilla', 'Press banca', 'Peso muerto', 'Press militar', 'Remo con barra', 'Hip thrust', 'Dominadas', 'Curl de bíceps'];
   const GOAL_TYPES = { bajar_peso: 'Bajar de peso', subir_peso: 'Subir de peso', fuerza: 'Aumentar fuerza' };
+  // Qué mide cada reto; el progreso se calcula solo con los datos de la app
+  const CHALLENGE_METRICS = {
+    dias: { label: 'Días entrenados', unit: 'días' },
+    clases: { label: 'Clases asistidas', unit: 'clases' },
+    registros: { label: 'Registros de entrenamiento', unit: 'registros' },
+    metas: { label: 'Metas mensuales cumplidas', unit: 'metas' },
+    puntos: { label: 'Puntos ganados', unit: 'pts' },
+  };
+
+  function seedChallenges(today) {
+    const month = U.month(today), year = today.slice(0, 4);
+    return [
+      { id: 'ch1', period: 'mes', key: month, title: 'Primer paso', description: 'Registra tu entrenamiento 5 veces este mes.', metric: 'registros', target: 5, reward: 'Shaker deportivo', sponsor: 'NutriFit Suplementos', sponsorLogo: null, limit: 30, color: '#3ddc97' },
+      { id: 'ch2', period: 'mes', key: month, title: `${U.cap(U.monthName(month))} constante`, description: 'Entrena al menos 12 días este mes.', metric: 'dias', target: 12, reward: 'Batido de proteína gratis', sponsor: 'NutriFit Suplementos', sponsorLogo: null, limit: 20, color: '#ff6b35' },
+      { id: 'ch3', period: 'mes', key: month, title: 'Clase tras clase', description: 'Asiste a 8 clases grupales.', metric: 'clases', target: 8, reward: 'Toalla de microfibra', sponsor: 'SportZone', sponsorLogo: null, limit: 10, color: '#4cc9f0' },
+      { id: 'ch4', period: 'mes', key: month, title: 'Meta cumplida', description: 'Cumple tu meta personal del mes.', metric: 'metas', target: 1, reward: '20% de descuento en suplementos', sponsor: 'NutriFit Suplementos', sponsorLogo: null, limit: 0, color: '#c77dff' },
+      { id: 'ch5', period: 'año', key: year, title: `Reto anual ${year}`, description: 'Cumple tu meta personal en 4 meses distintos del año.', metric: 'metas', target: 4, reward: '1 mes de membresía gratis + kit deportivo', sponsor: 'SportZone', sponsorLogo: null, limit: 5, color: '#f5c542' },
+    ];
+  }
+  const claimCode = () => 'R-' + Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('');
 
   /* ---------- Datos de ejemplo (relativos a la fecha de hoy) ---------- */
   function seed() {
@@ -189,10 +209,18 @@
       }
     });
 
+    // Algunos socios ya reclamaron el reto "Primer paso" (para la demo del panel)
+    const claims = [];
+    members.slice(1, 12).forEach((m, i) => {
+      const count = logs.filter(l => l.memberId === m.id && U.month(l.date) === month).length;
+      if (count >= 5 && i % 3 !== 2) claims.push({ id: id('r'), challengeId: 'ch1', memberId: m.id, code: claimCode(), date: U.addDays(today, -ri(0, 3)), status: i % 2 ? 'entregado' : 'pendiente' });
+    });
+
     return {
       version: 1,
       settings: { gymName: 'Iron Gym', adminPin: '1234' },
       plans, staff, classes, members, payments, bookings, checkins, logs,
+      challenges: seedChallenges(today), claims,
     };
   }
 
@@ -200,8 +228,10 @@
   let db;
   const listeners = [];
   function load() {
-    try { const raw = localStorage.getItem(KEY); if (raw) { db = JSON.parse(raw); return; } } catch (e) { /* sin almacenamiento */ }
-    db = seed(); save();
+    try { const raw = localStorage.getItem(KEY); if (raw) db = JSON.parse(raw); } catch (e) { /* sin almacenamiento */ }
+    if (!db) { db = seed(); save(); return; }
+    // Datos guardados con una versión anterior de la app: se agregan los retos
+    if (!db.challenges) { db.challenges = seedChallenges(U.today()); db.claims = []; save(); }
   }
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(db)); return true; }
@@ -252,7 +282,7 @@
     member: id => byId('members', id),
     saveMember: m => upsert('members', m),
     removeMember(id) {
-      ['bookings', 'logs', 'checkins', 'payments'].forEach(c => { db[c] = db[c].filter(x => x.memberId !== id); });
+      ['bookings', 'logs', 'checkins', 'payments', 'claims'].forEach(c => { db[c] = db[c].filter(x => x.memberId !== id); });
       remove('members', id);
     },
     nextCode() { return String(Math.max(1000, ...db.members.map(m => +m.code || 0)) + 1); },
@@ -379,8 +409,65 @@
       const c = db.checkins.filter(x => x.memberId === m.id).length;
       const l = db.logs.filter(x => x.memberId === m.id).length;
       const g = Object.values(m.goals || {}).filter(x => x.completed).length;
-      return c * POINTS.checkin + l * POINTS.log + g * POINTS.goal;
+      const r = (db.claims || []).filter(x => x.memberId === m.id).length;
+      return c * POINTS.checkin + l * POINTS.log + g * POINTS.goal + r * POINTS.reto;
     },
+
+    /* Retos con patrocinador (mensuales y anuales) */
+    CHALLENGE_METRICS,
+    challenges: () => db.challenges,
+    challenge: id => byId('challenges', id),
+    currentChallenges() {
+      const t = U.today();
+      return db.challenges.filter(c => c.key === U.month(t) || c.key === t.slice(0, 4))
+        .sort((a, b) => (a.period === b.period ? 0 : a.period === 'mes' ? -1 : 1));
+    },
+    saveChallenge: c => upsert('challenges', c),
+    removeChallenge(id) { db.claims = db.claims.filter(x => x.challengeId !== id); remove('challenges', id); },
+    challengeEnd(c) {
+      if (c.period === 'año') return c.key + '-12-31';
+      const [y, m] = c.key.split('-').map(Number);
+      return `${c.key}-${pad(new Date(y, m, 0).getDate())}`;
+    },
+    periodLabel: c => (c.period === 'año' ? `Año ${c.key}` : U.cap(U.monthYear(c.key))),
+    // Valor del socio en el periodo (sirve igual para '2026-10' o '2026')
+    metricValue(m, metric, key) {
+      const inP = d => d.startsWith(key);
+      const days = () => new Set(db.checkins.filter(c => c.memberId === m.id && inP(c.date)).map(c => c.date)).size;
+      const logs = () => db.logs.filter(l => l.memberId === m.id && inP(l.date)).length;
+      const goals = () => Object.entries(m.goals || {}).filter(([k, g]) => k.startsWith(key) && g.completed).length;
+      switch (metric) {
+        case 'dias': return days();
+        case 'clases': return db.bookings.filter(b => b.memberId === m.id && b.status === 'asistio' && inP(b.date)).length;
+        case 'registros': return logs();
+        case 'metas': return goals();
+        case 'puntos': return db.checkins.filter(c => c.memberId === m.id && inP(c.date)).length * POINTS.checkin + logs() * POINTS.log + goals() * POINTS.goal;
+        default: return 0;
+      }
+    },
+    challengeProgress(m, c) {
+      const value = this.metricValue(m, c.metric, c.key);
+      return { value, target: c.target, pct: Math.min(1, value / c.target), done: value >= c.target };
+    },
+    claims: () => db.claims.slice().sort((a, b) => b.date.localeCompare(a.date)),
+    claimsFor: id => db.claims.filter(x => x.challengeId === id),
+    memberClaim: (memberId, challengeId) => db.claims.find(x => x.memberId === memberId && x.challengeId === challengeId),
+    memberClaims: memberId => db.claims.filter(x => x.memberId === memberId).sort((a, b) => b.date.localeCompare(a.date)),
+    prizesLeft(c) { return c.limit ? Math.max(0, c.limit - this.claimsFor(c.id).length) : null; },
+    claim(memberId, challengeId) {
+      const m = byId('members', memberId), c = byId('challenges', challengeId);
+      if (!m || !c) return { ok: false, error: 'Reto no encontrado' };
+      if (this.memberClaim(memberId, challengeId)) return { ok: false, error: 'Ya reclamaste este premio' };
+      if (U.today() > this.challengeEnd(c)) return { ok: false, error: 'Este reto ya terminó' };
+      if (!this.challengeProgress(m, c).done) return { ok: false, error: 'Aún no completas el reto' };
+      if (this.prizesLeft(c) === 0) return { ok: false, error: 'Se agotaron los premios de este reto' };
+      let code; do { code = claimCode(); } while (db.claims.some(x => x.code === code));
+      const claim = { id: U.uid(), challengeId, memberId, code, date: U.today(), status: 'pendiente' };
+      db.claims.push(claim); save();
+      return { ok: true, claim };
+    },
+    findClaim: code => db.claims.find(x => x.code === String(code).trim().toUpperCase().replace(/^(?!R-)/, 'R-')),
+    deliverClaim(id) { const x = byId('claims', id); if (x) { x.status = 'entregado'; x.deliveredDate = U.today(); save(); } },
     level(m) {
       const points = this.points(m);
       let i = 0; while (i < LEVELS.length - 1 && points >= LEVELS[i + 1].min) i++;
