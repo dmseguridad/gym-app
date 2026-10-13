@@ -63,8 +63,47 @@
       a.download = filename; a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     },
+    /* Abre la galería/cámara y devuelve la imagen reducida como data URL
+       (fotos pequeñas para no llenar el almacenamiento). */
+    pickImage({ max = 320, square = false, type = 'image/jpeg', quality = 0.82 } = {}) {
+      return new Promise((resolve, reject) => {
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = 'image/*'; input.style.display = 'none';
+        document.body.appendChild(input);
+        input.addEventListener('change', () => {
+          const file = input.files && input.files[0];
+          input.remove();
+          if (!file) return resolve(null);
+          const url = URL.createObjectURL(file);
+          const img = new Image();
+          img.onload = () => {
+            let sw = img.naturalWidth, sh = img.naturalHeight, sx = 0, sy = 0;
+            if (square) { const s = Math.min(sw, sh); sx = (sw - s) / 2; sy = (sh - s) / 2; sw = sh = s; }
+            const scale = Math.min(1, max / Math.max(sw, sh));
+            const c = document.createElement('canvas');
+            c.width = Math.max(1, Math.round(sw * scale)); c.height = Math.max(1, Math.round(sh * scale));
+            const ctx = c.getContext('2d');
+            if (type === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); }
+            ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
+            URL.revokeObjectURL(url);
+            resolve(c.toDataURL(type, quality));
+          };
+          img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('No se pudo leer la imagen')); };
+          img.src = url;
+        });
+        input.click();
+      });
+    },
+    // Logo del gimnasio (el que sube el administrador) o el ícono por defecto
+    logo(size = 36) {
+      const l = GymDB.settings.logo;
+      return l
+        ? `<img class="logo-img" src="${l}" alt="Logo" style="width:${size}px;height:${size}px">`
+        : `<span class="logo-box" style="width:${size}px;height:${size}px">${UI.icon('dumbbell', Math.round(size * 0.55))}</span>`;
+    },
   };
   document.addEventListener('keydown', e => { if (e.key === 'Escape') UI.closeModal(); });
+  window.addEventListener('gymdb-save-error', () => UI.toast('No hay espacio para guardar. Usa una imagen más pequeña.', 'bad'));
 
   /* ---------- Gráficos SVG livianos (sin librerías) ---------- */
   window.Charts = {

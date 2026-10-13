@@ -20,8 +20,8 @@
     const lv = GymDB.level(me);
     const scroll = window.scrollY;
     app.innerHTML = `<div class="m-app">
-      <header class="m-header"><div class="row"><span class="logo-box">${UI.icon('dumbbell', 18)}</span><strong>${esc(GymDB.settings.gymName)}</strong></div>
-        <button class="m-av" data-action="profile" aria-label="Mi perfil">${Avatar.svg(me.avatar, lv.level, 40)}</button></header>
+      <header class="m-header"><div class="row">${UI.logo(32)}<strong>${esc(GymDB.settings.gymName)}</strong></div>
+        <button class="m-av" data-action="profile" aria-label="Mi perfil">${Avatar.face(me, lv.level, 40)}</button></header>
       <main class="m-main">${PAGES[page]()}</main>
       <nav class="tabbar" aria-label="Secciones"><div class="tabbar-inner">${TABS.map(([k, l, i]) => `<a href="#/${k}" class="${k === page ? 'active' : ''}" ${k === page ? 'aria-current="page"' : ''}>${UI.icon(i, 22)}<span>${l}</span></a>`).join('')}</div></nav>
     </div>`;
@@ -31,7 +31,7 @@
 
   function renderLogin() {
     app.innerHTML = `<div class="center-screen"><form class="card login-card stack" data-form="login">
-      <div class="brand-lg"><span class="logo-box">${UI.icon('dumbbell', 24)}</span><div><h1>${esc(GymDB.settings.gymName)}</h1><div class="muted small">Tu entrenamiento, tu progreso</div></div></div>
+      <div class="brand-lg">${UI.logo(46)}<div><h1>${esc(GymDB.settings.gymName)}</h1><div class="muted small">Tu entrenamiento, tu progreso</div></div></div>
       <div class="field"><label for="ph">Celular</label><input id="ph" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09XXXXXXXX" required></div>
       <div class="field"><label for="pin">PIN</label><input id="pin" name="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" required></div>
       <button class="btn btn-primary btn-block btn-lg">Entrar</button>
@@ -281,6 +281,14 @@
   function profileModal() {
     const s = GymDB.status(me), plan = GymDB.plan(me.planId);
     UI.modal(`${modalHead('Mi perfil')}
+      <div style="text-align:center;margin-bottom:12px">
+        <div class="photo-lg">${Avatar.face(me, GymDB.level(me).level, 120)}</div>
+        <div class="row" style="justify-content:center;margin-top:12px">
+          <button class="btn btn-sm btn-primary" data-action="upload-photo">${UI.icon('user', 15)} ${me.photo ? 'Cambiar foto' : 'Subir mi foto'}</button>
+          ${me.photo ? '<button class="btn btn-sm btn-danger" data-action="remove-photo">Quitar</button>' : ''}
+        </div>
+        ${me.photo ? '' : '<div class="small muted" style="margin-top:8px">Así te reconocerán en recepción. Tu avatar sigue en la pestaña Avatar.</div>'}
+      </div>
       <div class="list-item"><span class="grow muted">Nombre</span><strong>${esc(me.name)}</strong></div>
       <div class="list-item"><span class="grow muted">Celular</span><strong>${esc(me.phone)}</strong></div>
       <div class="list-item"><span class="grow muted">Plan</span><strong>${esc(plan ? plan.name : '—')}</strong></div>
@@ -299,6 +307,15 @@
   const ACTIONS = {
     close: () => UI.closeModal(),
     profile: () => profileModal(),
+    async 'upload-photo'() {
+      try {
+        const img = await UI.pickImage({ max: 320, square: true });
+        if (!img) return;
+        GymDB.saveMember({ id: me.id, photo: img });
+        render(); profileModal(); UI.toast('✓ Foto actualizada');
+      } catch (e) { UI.toast(e.message, 'bad'); }
+    },
+    'remove-photo'() { GymDB.saveMember({ id: me.id, photo: null }); render(); profileModal(); UI.toast('Foto quitada'); },
     logout() { localStorage.removeItem(SESSION); UI.closeModal(); location.hash = ''; render(); },
     day(d) { st.day = d.d; render(); },
     metric(d) { st.metric = d.m; render(); },

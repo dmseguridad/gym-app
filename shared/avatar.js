@@ -78,5 +78,11 @@ window.Avatar = (function () {
     return { skin: p(OPTIONS.skin), hair: p(OPTIONS.hair), hairColor: p(OPTIONS.hairColor), shirt: p(OPTIONS.shirt), accessory: 'ninguno' };
   }
 
-  return { OPTIONS, UNLOCK, LABELS, svg, random };
+  // Foto del socio si la subió; si no, su avatar
+  function face(m, level, size) {
+    if (m && m.photo) return `<img class="photo" src="${m.photo}" alt="" style="width:${size}px;height:${size}px;object-fit:cover;display:block">`;
+    return svg(m && m.avatar, level, size);
+  }
+
+  return { OPTIONS, UNLOCK, LABELS, svg, face, random };
 })();

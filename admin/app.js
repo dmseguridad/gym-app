@@ -31,7 +31,7 @@
       : `Hola ${U.first(m.name)}, te recordamos que tu membresía en ${gym} vence el ${date}. Renueva a tiempo y no pierdas tu avance 💪`;
     return waLink(m.phone, msg);
   }
-  const avatarMini = m => `<span class="mini-av">${Avatar.svg(m.avatar, GymDB.level(m).level, 38)}</span>`;
+  const avatarMini = m => `<span class="mini-av">${Avatar.face(m, GymDB.level(m).level, 38)}</span>`;
   const stat = (label, value, sub = '', cls = '') => `<div class="card stat"><div class="label">${label}</div><div class="value">${value}</div><div class="sub ${cls}">${sub}</div></div>`;
 
   /* ---------------- Render principal ---------------- */
@@ -42,7 +42,7 @@
     const scroll = window.scrollY;
     app.innerHTML = `<div class="layout">
       <aside class="sidebar">
-        <div class="brand"><span class="logo-box">${UI.icon('dumbbell', 20)}</span>${esc(GymDB.settings.gymName)}</div>
+        <div class="brand">${UI.logo(36)}${esc(GymDB.settings.gymName)}</div>
         <nav class="nav" aria-label="Secciones">
           ${NAV.map(([k, l, i]) => `<a href="#/${k}" class="${k === page ? 'active' : ''}" ${k === page ? 'aria-current="page"' : ''}>${UI.icon(i, 18)}<span>${l}</span></a>`).join('')}
           <a href="#" class="logout" data-action="logout">${UI.icon('logout', 18)}<span>Salir</span></a>
@@ -57,7 +57,7 @@
 
   function renderLogin() {
     app.innerHTML = `<div class="center-screen"><form class="card login-card stack" data-form="login">
-      <div class="brand-lg"><span class="logo-box">${UI.icon('dumbbell', 24)}</span><div><h1>${esc(GymDB.settings.gymName)}</h1><div class="muted small">Panel de administración</div></div></div>
+      <div class="brand-lg">${UI.logo(46)}<div><h1>${esc(GymDB.settings.gymName)}</h1><div class="muted small">Panel de administración</div></div></div>
       <div class="field"><label for="pin">PIN de administrador</label><input id="pin" name="pin" type="password" inputmode="numeric" autocomplete="current-password" required autofocus></div>
       <button class="btn btn-primary btn-block btn-lg">Entrar</button>
       <p class="muted small" style="text-align:center">Demo: PIN <strong>1234</strong></p>
@@ -228,6 +228,13 @@
       <div class="page-head"><div><h1>Ajustes</h1></div></div>
       <div class="grid g2">
         <section class="card"><h2>Gimnasio</h2>
+          <div class="row" style="gap:16px;margin-bottom:16px">
+            ${UI.logo(72)}
+            <div class="grow"><div class="lbl">Logo</div>
+              <div class="small muted" style="margin:2px 0 8px">Aparece en el panel y en la app de tus socios.</div>
+              <div class="row wrap"><button class="btn btn-sm" data-action="upload-logo">${UI.icon('download', 15)} ${s.logo ? 'Cambiar logo' : 'Subir logo'}</button>
+              ${s.logo ? `<button class="btn btn-sm btn-danger" data-action="remove-logo">Quitar</button>` : ''}</div></div>
+          </div>
           <form data-form="settings" class="stack">
             <div class="field"><label for="gn">Nombre del gimnasio</label><input id="gn" name="gymName" value="${esc(s.gymName)}" required></div>
             <div class="field"><label for="ap">PIN del administrador</label><input id="ap" name="adminPin" value="${esc(s.adminPin)}" inputmode="numeric" pattern="\\d{4,6}" title="4 a 6 dígitos" required></div>
@@ -294,10 +301,11 @@
     const gp = rep.goal;
     const pays = GymDB.payments(id).slice(-5).reverse();
     UI.modal(`${modalHead(esc(m.name))}
-      <div class="det-head"><div class="av">${Avatar.svg(m.avatar, lv.level, 92)}</div>
+      <div class="det-head"><div class="av">${Avatar.face(m, lv.level, 92)}</div>
         <div class="grow"><div class="row wrap">${UI.badge(s)}<span class="badge info">Nivel ${lv.level} · ${lv.name}</span></div>
           <div class="small" style="margin-top:8px">${planName(m.planId)} · vence el ${U.fmtDate(m.endDate, { day: 'numeric', month: 'long', year: 'numeric' })}</div>
-          <div class="small muted">Cel. ${esc(m.phone)} · Código ${m.code} · ${lv.points} pts</div></div></div>
+          <div class="small muted">Cel. ${esc(m.phone)} · Código ${m.code} · ${lv.points} pts</div>
+          <button class="btn btn-sm" style="margin-top:8px" data-action="member-photo" data-id="${m.id}">${UI.icon('user', 15)} ${m.photo ? 'Cambiar foto' : 'Subir foto'}</button></div></div>
       <div class="grid g3">
         <div class="mini-stat"><div class="value">${rep.days}</div><div class="label">Días este mes</div></div>
         <div class="mini-stat"><div class="value">${rep.classes}</div><div class="label">Clases</div></div>
@@ -456,6 +464,22 @@
     'edit-plan': d => planForm(d.id),
     'delete-plan'(d) { GymDB.removePlan(d.id); UI.closeModal(); UI.toast('Plan eliminado'); render(); },
     'checkin-member': d => doCheckin(d.id),
+    async 'upload-logo'() {
+      try {
+        const img = await UI.pickImage({ max: 256, type: 'image/png' });
+        if (!img) return;
+        if (GymDB.saveSettings({ logo: img })) { UI.toast('Logo actualizado'); render(); }
+      } catch (e) { UI.toast(e.message, 'bad'); }
+    },
+    'remove-logo'() { GymDB.saveSettings({ logo: null }); UI.toast('Logo quitado'); render(); },
+    async 'member-photo'(d) {
+      try {
+        const img = await UI.pickImage({ max: 320, square: true });
+        if (!img) return;
+        GymDB.saveMember({ id: d.id, photo: img });
+        render(); memberDetail(d.id); UI.toast('Foto actualizada');
+      } catch (e) { UI.toast(e.message, 'bad'); }
+    },
     export() { UI.download(`respaldo-gimnasio-${U.today()}.json`, GymDB.exportJSON()); },
     reset() { if (!confirm('Esto reemplaza todos los datos actuales por los datos de ejemplo. ¿Continuar?')) return; GymDB.reset(); UI.toast('Datos de ejemplo restablecidos'); render(); },
   };

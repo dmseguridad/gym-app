@@ -153,6 +153,9 @@ tr.clickable:hover td { background: rgba(255, 255, 255, .02); }
 .login-card { width: 100%; max-width: 380px; padding: 26px; }
 .brand-lg { display: flex; gap: 12px; align-items: center; margin-bottom: 6px; }
 .brand-lg h1 { margin: 0; }
+.logo-img { border-radius: 12px; object-fit: contain; background: #fff; padding: 2px; flex: none; display: block; }
+.photo-lg { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid var(--accent); }
+.photo-lg img, .photo-lg svg { width: 120px !important; height: auto; display: block; }
 .logo-box { width: 46px; height: 46px; border-radius: 14px; background: var(--accent); color: #fff; display: grid; place-items: center; flex: none; }
 
 .chart { display: block; overflow: visible; }

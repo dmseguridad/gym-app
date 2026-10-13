@@ -203,7 +203,10 @@
     try { const raw = localStorage.getItem(KEY); if (raw) { db = JSON.parse(raw); return; } } catch (e) { /* sin almacenamiento */ }
     db = seed(); save();
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { /* sin almacenamiento */ } }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(db)); return true; }
+    catch (e) { window.dispatchEvent(new CustomEvent('gymdb-save-error')); return false; }
+  }
   // Sincroniza entre pestañas (panel y app del socio abiertos a la vez)
   window.addEventListener('storage', e => {
     if (e.key === KEY && e.newValue) { db = JSON.parse(e.newValue); listeners.forEach(f => f()); }
@@ -227,7 +230,7 @@
   const DB = {
     LEVELS, POINTS, EXERCISES, GOAL_TYPES,
     get settings() { return db.settings; },
-    saveSettings(patch) { Object.assign(db.settings, patch); save(); },
+    saveSettings(patch) { Object.assign(db.settings, patch); return save(); },
     onChange(f) { listeners.push(f); },
     reset() { db = seed(); save(); },
     exportJSON() { return JSON.stringify(db, null, 2); },
