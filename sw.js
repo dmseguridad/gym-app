@@ -1,4 +1,4 @@
-const CACHE = 'gym-app-v3';
+const CACHE = 'gym-app-v4';
 const SHELL = [
   './', './admin/', './socio/',
   './admin/app.js', './socio/app.js',
@@ -21,7 +21,8 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== self.location.origin) return;
   e.respondWith(
-    fetch(e.request).then(resp => {
+    // no-cache: siempre pregunta al servidor si hay versión nueva (evita la copia de 10 min del navegador)
+    fetch(e.request, { cache: 'no-cache' }).then(resp => {
       if (resp && resp.ok) {
         const copy = resp.clone();
         caches.open(CACHE).then(c => c.put(e.request, copy));

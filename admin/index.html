@@ -68,7 +68,14 @@
 <script src="../shared/ui.js"></script>
 <script src="app.js"></script>
 <script>
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js').catch(() => {});
+  if ('serviceWorker' in navigator) {
+    // Cuando se publica una versión nueva, la app se recarga sola una vez para usarla
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
+    navigator.serviceWorker.register('../sw.js', { updateViaCache: 'none' }).then(r => r.update()).catch(() => {});
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') navigator.serviceWorker.getRegistration().then(r => r && r.update()); });
+  }
 </script>
 </body>
 </html>

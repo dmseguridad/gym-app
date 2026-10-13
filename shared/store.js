@@ -57,7 +57,7 @@
     const month = U.month(today), year = today.slice(0, 4);
     return [
       { id: 'ch1', period: 'mes', key: month, title: 'Primer paso', description: 'Registra tu entrenamiento 5 veces este mes.', metric: 'registros', target: 5, reward: 'Shaker deportivo', sponsor: 'NutriFit Suplementos', sponsorLogo: null, limit: 30, color: '#3ddc97' },
-      { id: 'ch2', period: 'mes', key: month, title: `${U.cap(U.monthName(month))} constante`, description: 'Entrena al menos 12 días este mes.', metric: 'dias', target: 12, reward: 'Batido de proteína gratis', sponsor: 'NutriFit Suplementos', sponsorLogo: null, limit: 20, color: '#ff6b35' },
+      { id: 'ch2', period: 'mes', key: month, title: `${U.cap(U.monthName(month))} constante`, description: 'Entrena al menos 12 días este mes.', metric: 'dias', target: 12, reward: '10% de descuento en Marathon Sports', sponsor: 'Marathon Sports', sponsorLogo: null, limit: 20, color: '#ff6b35' },
       { id: 'ch3', period: 'mes', key: month, title: 'Clase tras clase', description: 'Asiste a 8 clases grupales.', metric: 'clases', target: 8, reward: 'Toalla de microfibra', sponsor: 'SportZone', sponsorLogo: null, limit: 10, color: '#4cc9f0' },
       { id: 'ch4', period: 'mes', key: month, title: 'Meta cumplida', description: 'Cumple tu meta personal del mes.', metric: 'metas', target: 1, reward: '20% de descuento en suplementos', sponsor: 'NutriFit Suplementos', sponsorLogo: null, limit: 0, color: '#c77dff' },
       { id: 'ch5', period: 'año', key: year, title: `Reto anual ${year}`, description: 'Cumple tu meta personal en 4 meses distintos del año.', metric: 'metas', target: 4, reward: '1 mes de membresía gratis + kit deportivo', sponsor: 'SportZone', sponsorLogo: null, limit: 5, color: '#f5c542' },
@@ -217,7 +217,7 @@
     });
 
     return {
-      version: 1,
+      version: 2,
       settings: { gymName: 'Iron Gym', adminPin: '1234' },
       plans, staff, classes, members, payments, bookings, checkins, logs,
       challenges: seedChallenges(today), claims,
@@ -232,6 +232,12 @@
     if (!db) { db = seed(); save(); return; }
     // Datos guardados con una versión anterior de la app: se agregan los retos
     if (!db.challenges) { db.challenges = seedChallenges(U.today()); db.claims = []; save(); }
+    // v2: el reto principal del mes de ejemplo pasa a ser de Marathon Sports
+    if ((db.version || 1) < 2) {
+      const c = db.challenges.find(x => x.id === 'ch2');
+      if (c && c.sponsor === 'NutriFit Suplementos') { c.sponsor = 'Marathon Sports'; c.reward = '10% de descuento en Marathon Sports'; c.sponsorLogo = null; }
+      db.version = 2; save();
+    }
   }
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(db)); return true; }
