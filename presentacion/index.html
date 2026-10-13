@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KadaMeta · Presentación</title>
+<meta name="description" content="Presentación de KadaMeta para dueños de gimnasio.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="../shared/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../shared/icon.svg">
+<meta name="theme-color" content="#0e1014">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KadaMeta Demo">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="../shared/styles.css">
+<style>
+  html, body { height: 100%; overflow: hidden; }
+  .deck { display: flex; height: 100vh; height: 100dvh; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; overscroll-behavior: none; }
+  .deck::-webkit-scrollbar { display: none; }
+  .slide { flex: 0 0 100vw; width: 100vw; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; overflow-y: auto; display: flex; align-items: center; justify-content: center; padding: calc(28px + env(safe-area-inset-top)) 56px calc(96px + env(safe-area-inset-bottom)); position: relative; }
+  .slide::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 85% 10%, rgba(255, 107, 53, .14), transparent 45%); pointer-events: none; }
+  .inner { width: 100%; max-width: 1120px; position: relative; }
+  .split { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; }
+  .kicker { color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: .1em; font-size: .85rem; margin-bottom: 10px; }
+  .t1 { font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 900; letter-spacing: -.035em; line-height: 1.02; margin: 0 0 18px; }
+  .t2 { font-size: clamp(1.7rem, 3.6vw, 2.8rem); font-weight: 900; letter-spacing: -.03em; line-height: 1.08; margin: 0 0 14px; }
+  .grad { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { font-size: clamp(1.05rem, 1.7vw, 1.3rem); color: var(--muted); max-width: 600px; }
+  .bul { list-style: none; padding: 0; margin: 18px 0 0; }
+  .bul li { padding: 10px 0 10px 36px; position: relative; font-size: 1.08rem; border-bottom: 1px solid var(--border); }
+  .bul li:last-child { border-bottom: 0; }
+  .bul li::before { content: '✓'; position: absolute; left: 4px; top: 9px; width: 22px; height: 22px; border-radius: 50%; background: rgba(61, 220, 151, .16); color: var(--ok); font-weight: 900; font-size: .8rem; display: grid; place-items: center; }
+  .brand-xl { display: flex; align-items: center; gap: 14px; font-weight: 900; font-size: 1.7rem; letter-spacing: -.02em; margin-bottom: 26px; }
+  .brand-xl img { width: 56px; height: 56px; border-radius: 16px; }
+  .brand-xl b { color: var(--accent); }
+  .tri { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px; }
+  .pain { padding: 26px; }
+  .pain .emo { font-size: 2.4rem; line-height: 1; margin-bottom: 14px; }
+  .pain h3 { font-size: 1.25rem; margin: 0 0 8px; }
+  .pain p { color: var(--muted); margin: 0; font-size: 1rem; }
+  .six { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
+  .ben { padding: 20px; }
+  .ben .emo { font-size: 1.8rem; }
+  .ben h3 { margin: 10px 0 6px; font-size: 1.1rem; }
+  .ben p { margin: 0; color: var(--muted); font-size: .95rem; }
+  /* Mockups */
+  .phone { width: 300px; max-width: 100%; justify-self: center; border-radius: 40px; background: #07080b; padding: 12px; box-shadow: 0 30px 80px rgba(255, 107, 53, .18), var(--shadow); border: 1px solid #2b303b; }
+  .phone .scr { background: var(--bg); border-radius: 30px; padding: 16px 14px; min-height: 520px; display: flex; flex-direction: column; gap: 10px; }
+  .phone .notch { width: 90px; height: 6px; border-radius: 6px; background: #2b303b; margin: 0 auto 6px; }
+  .m-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 12px; }
+  .m-row { display: flex; align-items: center; gap: 10px; }
+  .laptop { justify-self: center; width: 100%; max-width: 560px; }
+  .laptop .lid { background: #07080b; border-radius: 18px 18px 6px 6px; padding: 10px; border: 1px solid #2b303b; box-shadow: var(--shadow); }
+  .laptop .base { height: 14px; background: linear-gradient(#3a4150, #20242d); border-radius: 0 0 16px 16px; margin: 0 -26px; }
+  .dash { background: var(--bg); border-radius: 10px; padding: 14px; display: grid; grid-template-columns: 92px 1fr; gap: 12px; min-height: 300px; }
+  .dash .side { background: var(--surface); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; font-size: .62rem; color: var(--muted); font-weight: 600; }
+  .dash .side span { padding: 5px 6px; border-radius: 6px; }
+  .dash .side span.on { background: rgba(255, 107, 53, .15); color: var(--accent); }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px; }
+  .tile .l { font-size: .55rem; color: var(--muted); font-weight: 600; }
+  .tile .v { font-size: 1rem; font-weight: 800; }
+  .tile .s { font-size: .5rem; }
+  .att { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px; margin-top: 8px; font-size: .62rem; }
+  .att .it { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .att .it:last-child { border-bottom: 0; }
+  .dot-av { width: 18px; height: 18px; border-radius: 50%; overflow: hidden; flex: none; }
+  .dot-av svg { width: 18px; height: auto; display: block; }
+  .chip-s { font-size: .5rem; padding: 2px 6px; border-radius: 6px; font-weight: 700; }
+  .evo { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+  .evo figure { margin: 0; text-align: center; }
+  .evo figure > div { border-radius: 22px; overflow: hidden; line-height: 0; box-shadow: var(--shadow); }
+  .evo figcaption { margin-top: 10px; font-weight: 700; }
+  .evo figcaption small { display: block; color: var(--muted); font-weight: 500; }
+  .pts { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 26px; }
+  .pts span { background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; font-weight: 600; }
+  .pts b { color: var(--ok); }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 28px; }
+  .step { padding: 22px; position: relative; }
+  .step .n { width: 38px; height: 38px; border-radius: 12px; background: var(--accent); color: #fff; font-weight: 900; display: grid; place-items: center; font-size: 1.1rem; margin-bottom: 14px; }
+  .step h3 { margin: 0 0 6px; font-size: 1.1rem; }
+  .step p { margin: 0; color: var(--muted); font-size: .95rem; }
+  .flow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+  .flow div { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+  .flow b { display: block; margin-bottom: 4px; }
+  .flow span { color: var(--muted); font-size: .92rem; }
+  .qr-box { background: #fff; border-radius: 22px; padding: 18px; display: inline-block; line-height: 0; box-shadow: 0 20px 60px rgba(255, 107, 53, .25); }
+  .qr-box img, .qr-box canvas { display: block; }
+  .cred { font-family: ui-monospace, Menlo, Consolas, monospace; background: var(--surface-2); padding: 3px 9px; border-radius: 7px; font-weight: 700; }
+  .wa-big { background: #25d366; border-color: #25d366; color: #062b14; min-height: 56px; font-size: 1.1rem; padding: 14px 26px; border-radius: 16px; }
+  .sample { font-size: .72rem; color: var(--muted); text-align: center; margin-top: 8px; }
+  /* Controles */
+  .controls { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); z-index: 10; background: linear-gradient(transparent, rgba(14, 16, 20, .92) 40%); }
+  .nav-btn { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text); display: grid; place-items: center; cursor: pointer; }
+  .nav-btn:disabled { opacity: .3; cursor: default; }
+  .dots { display: flex; gap: 7px; }
+  .dots button { width: 9px; height: 9px; border-radius: 99px; border: 0; padding: 0; background: #3a4150; cursor: pointer; transition: width .2s, background .2s; }
+  .dots button.on { width: 26px; background: var(--accent); }
+  .fs { position: fixed; top: calc(12px + env(safe-area-inset-top)); right: 14px; z-index: 11; }
+  .count { position: fixed; top: calc(18px + env(safe-area-inset-top)); left: 18px; z-index: 11; color: var(--muted); font-size: .85rem; font-weight: 700; }
+  @media (max-width: 900px), (orientation: portrait) {
+    .slide { padding-left: 22px; padding-right: 22px; align-items: flex-start; padding-top: calc(56px + env(safe-area-inset-top)); }
+    .split { grid-template-columns: 1fr; gap: 28px; }
+    .tri, .six { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) { .tri, .six, .steps, .flow { grid-template-columns: 1fr; } .tiles { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="count" id="count">1 / 10</div>
+<button class="nav-btn fs" id="fs" aria-label="Pantalla completa" title="Pantalla completa"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+
+<main class="deck" id="deck">
+
+  <!-- 1. Portada -->
+  <section class="slide" aria-label="Portada"><div class="inner split">
+    <div>
+      <div class="brand-xl"><img src="../shared/icon.svg" alt=""><span>Kada<b>Meta</b></span></div>
+      <h1 class="t1">Tus socios cumplen <span class="grad">cada meta</span>.<br>Tu gimnasio retiene más.</h1>
+      <p class="lead">Sistema para administrar tu gimnasio + una app para tus socios que los motiva a volver.</p>
+    </div>
+    <div class="phone"><div class="scr" id="ph-cover"></div></div>
+  </div></section>
+
+  <!-- 2. Problema -->
+  <section class="slide" aria-label="El problema"><div class="inner">
+    <div class="kicker">¿Te suena familiar?</div>
+    <h2 class="t2">Los gimnasios pierden socios y dinero<br>por falta de control y motivación</h2>
+    <div class="tri">
+      <div class="card pain"><div class="emo">🚪</div><h3>Socios que se van</h3><p>Se inscriben con muchas ganas y al segundo mes dejan de venir. No ven su avance y pierden la motivación.</p></div>
+      <div class="card pain"><div class="emo">💸</div><h3>Cobros que se escapan</h3><p>Membresías vencidas que nadie recuerda cobrar. Cuentas en un cuaderno o en Excel.</p></div>
+      <div class="card pain"><div class="emo">📋</div><h3>Todo por WhatsApp</h3><p>Horarios, cupos, reservas y asistencia difíciles de controlar. Recepción pierde tiempo.</p></div>
+    </div>
+  </div></section>
+
+  <!-- 3. Solución -->
+  <section class="slide" aria-label="La solución"><div class="inner">
+    <div class="kicker">La solución</div>
+    <h2 class="t2">Dos apps conectadas: <span class="grad">una para ti, una para tus socios</span></h2>
+    <div class="split" style="margin-top:26px">
+      <div><div class="laptop"><div class="lid"><div class="dash" id="dash-a"></div></div><div class="base"></div></div>
+        <p style="text-align:center;margin-top:16px"><strong>Panel del gimnasio</strong><br><span class="muted">Para ti y tu recepción · computadora o tablet</span></p></div>
+      <div style="text-align:center"><div class="phone" style="margin:0 auto;width:250px"><div class="scr" id="ph-sol" style="min-height:430px"></div></div>
+        <p style="margin-top:16px"><strong>App del socio</strong><br><span class="muted">En el celular de cada socio · sin Play Store</span></p></div>
+    </div>
+  </div></section>
+
+  <!-- 4. Panel -->
+  <section class="slide" aria-label="Panel del gimnasio"><div class="inner split">
+    <div>
+      <div class="kicker">Panel del gimnasio</div>
+      <h2 class="t2">Tu gimnasio bajo control, en una sola pantalla</h2>
+      <ul class="bul">
+        <li>Socios, pagos y fechas de vencimiento</li>
+        <li>Recordatorio de pago por WhatsApp con un clic</li>
+        <li>Clases, horarios, cupos y entrenadores</li>
+        <li>Asistencia con el código del socio</li>
+        <li>Reportes: ingresos, horas pico y clases más llenas</li>
+      </ul>
+    </div>
+    <div><div class="laptop"><div class="lid"><div class="dash" id="dash-b"></div></div><div class="base"></div></div><div class="sample">Datos de ejemplo</div></div>
+  </div></section>
+
+  <!-- 5. App del socio -->
+  <section class="slide" aria-label="App del socio"><div class="inner split">
+    <div class="phone"><div class="scr" id="ph-member"></div></div>
+    <div>
+      <div class="kicker">App del socio</div>
+      <h2 class="t2">Tus socios ven su avance <span class="grad">día a día</span></h2>
+      <ul class="bul">
+        <li>Reservan sus clases desde el celular</li>
+        <li>Registran su peso y sus ejercicios</li>
+        <li>Se ponen una meta cada mes</li>
+        <li>Reciben su reporte de fin de mes: dónde empezaron, dónde están y cuánto falta</li>
+        <li>Se instala con un enlace o un código QR</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- 6. Avatar -->
+  <section class="slide" aria-label="Avatar" style="text-align:center"><div class="inner">
+    <div class="kicker">Motivación que engancha</div>
+    <h2 class="t2">Un avatar que se hace más fuerte<br>mientras más entrena</h2>
+    <p class="lead" style="margin:0 auto">Cada socio crea su personaje. Con su constancia sube de nivel y desbloquea accesorios. Quiere volver para no perder su racha.</p>
+    <div class="evo" id="evo"></div>
+    <div class="pts"><span>Entrada al gym <b>+10</b></span><span>Registro diario <b>+5</b></span><span>Reto completado <b>+50</b></span><span>Meta del mes <b>+100</b></span></div>
+  </div></section>
+
+  <!-- 7. Retos -->
+  <section class="slide" aria-label="Retos con patrocinadores"><div class="inner split">
+    <div>
+      <div class="kicker">Retos con premios</div>
+      <h2 class="t2">Los premios los pone <span class="grad">un patrocinador</span>, no tu gimnasio</h2>
+      <p class="lead">Tiendas de suplementos, ropa deportiva o comida saludable regalan premios a cambio de llegar a tus socios.</p>
+      <div class="flow">
+        <div><b>1. Creas el reto</b><span>"Entrena 12 días este mes"</span></div>
+        <div><b>2. El socio lo cumple</b><span>El avance se calcula solo</span></div>
+        <div><b>3. Reclama su premio</b><span>Con un código en recepción</span></div>
+        <div><b>4. Reporte al patrocinador</b><span>Cuántos participaron y ganaron</span></div>
+      </div>
+    </div>
+    <div class="phone"><div class="scr" id="ph-reto"></div></div>
+  </div></section>
+
+  <!-- 8. Beneficios -->
+  <section class="slide" aria-label="Beneficios"><div class="inner">
+    <div class="kicker">¿Qué gana tu gimnasio?</div>
+    <h2 class="t2">Más socios que se quedan, menos trabajo para ti</h2>
+    <div class="six">
+      <div class="card ben"><div class="emo">🔁</div><h3>Más renovaciones</h3><p>Socios motivados por sus metas, sus retos y su avatar.</p></div>
+      <div class="card ben"><div class="emo">💰</div><h3>Cobros al día</h3><p>Sabes quién debe y se lo recuerdas al instante.</p></div>
+      <div class="card ben"><div class="emo">⏱️</div><h3>Menos trabajo</h3><p>Reservas y asistencia ordenadas, sin cuadernos.</p></div>
+      <div class="card ben"><div class="emo">✨</div><h3>Imagen moderna</h3><p>Tu gimnasio con su propia app, con tu logo.</p></div>
+      <div class="card ben"><div class="emo">🤝</div><h3>Patrocinios</h3><p>Premios para tus socios sin que te cuesten.</p></div>
+      <div class="card ben"><div class="emo">📊</div><h3>Decisiones con datos</h3><p>Horas pico, clases más llenas e ingresos por mes.</p></div>
+    </div>
+  </div></section>
+
+  <!-- 9. Cómo empezamos -->
+  <section class="slide" aria-label="Cómo empezamos"><div class="inner">
+    <div class="kicker">Empezar es fácil</div>
+    <h2 class="t2">Nosotros lo configuramos por ti</h2>
+    <div class="steps">
+      <div class="card step"><div class="n">1</div><h3>Demo en tu gimnasio</h3><p>Te lo mostramos con tus propios planes y clases.</p></div>
+      <div class="card step"><div class="n">2</div><h3>Cargamos tus datos</h3><p>Planes, horarios, entrenadores y socios.</p></div>
+      <div class="card step"><div class="n">3</div><h3>Tus socios instalan la app</h3><p>Con un enlace o un QR en recepción. Sin tiendas.</p></div>
+      <div class="card step"><div class="n">4</div><h3>Te acompañamos</h3><p>Soporte por WhatsApp y revisión de resultados.</p></div>
+    </div>
+  </div></section>
+
+  <!-- 10. Cierre -->
+  <section class="slide" aria-label="Pruébalo"><div class="inner split">
+    <div>
+      <div class="kicker">Pruébalo ahora</div>
+      <h2 class="t2">Escanea y prueba la app<br>en tu propio celular</h2>
+      <p class="lead">Celular: <span class="cred">0991234567</span> · PIN: <span class="cred">1234</span></p>
+      <p class="lead" style="margin-top:22px">¿Lo implementamos en tu gimnasio?</p>
+      <a class="btn wa-big" id="wa" href="#" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
+      <div class="brand-xl" style="margin:30px 0 0;font-size:1.2rem"><img src="../shared/icon.svg" alt="" style="width:36px;height:36px;border-radius:10px"><span>Kada<b>Meta</b> <span class="muted" style="font-weight:600">· Cada meta cuenta</span></span></div>
+    </div>
+    <div style="text-align:center">
+      <div class="qr-box" id="qr"></div>
+      <p class="muted small" id="qr-url" style="margin-top:12px;word-break:break-all"></p>
+    </div>
+  </div></section>
+</main>
+
+<nav class="controls" aria-label="Navegación">
+  <button class="nav-btn" id="prev" aria-label="Anterior"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="next" aria-label="Siguiente"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
+</nav>
+
+<script src="../shared/avatar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  const look = { skin: '#f1c27d', hair: 'corto', hairColor: '#3b2314', shirt: '#ff6b35', accessory: 'medalla' };
+  const look2 = { skin: '#c68642', hair: 'largo', hairColor: '#1a1a1a', shirt: '#c77dff', accessory: 'ninguno' };
+  const look3 = { skin: '#e0ac69', hair: 'rizado', hairColor: '#3b2314', shirt: '#4cc9f0', accessory: 'ninguno' };
+  const ring = (pct, size) => {
+    const r = 42, c = 2 * Math.PI * r;
+    return `<svg viewBox="0 0 100 100" width="${size}" height="${size}"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c * pct} ${c}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">${Math.round(pct * 100)}%</text></svg>`;
+  };
+  const bar = pct => `<div class="progress"><span style="width:${pct * 100}%"></span></div>`;
+
+  // Pantallas de ejemplo del celular
+  const header = `<div class="notch"></div><div class="m-row" style="justify-content:space-between"><div class="m-row"><span class="logo-box" style="width:26px;height:26px;border-radius:8px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg></span><strong style="font-size:.85rem">Tu Gimnasio</strong></div><span class="dot-av" style="width:26px;height:26px">${Avatar.svg(look, 4, 26)}</span></div>`;
+  const hero = size => `<div class="m-card m-row" style="background:linear-gradient(135deg,rgba(255,107,53,.2),transparent 60%),var(--surface)"><div style="border-radius:16px;overflow:hidden;line-height:0">${Avatar.svg(look, 4, size)}</div><div class="grow"><div class="small muted">Hola,</div><strong style="font-size:1.25rem">Mateo</strong><div style="color:var(--accent-2);font-weight:700;font-size:.78rem;margin:2px 0 6px">Nivel 4 · Guerrero</div>${bar(.6)}</div></div>`;
+  const meta = `<div class="m-card"><strong style="font-size:.88rem">Mi meta de octubre</strong><div class="m-row" style="margin-top:8px">${ring(.72, 74)}<div><strong style="font-size:.85rem">Bajar a 76 kg</strong><div class="muted" style="font-size:.72rem">Empezaste en 81 kg · hoy 77.4 kg</div><div style="font-size:.75rem;margin-top:4px">Te faltan <b>1.4 kg</b></div></div></div></div>`;
+  const reto = done => `<div class="m-card" style="border-left:4px solid #ff6b35"><div class="m-row"><span class="sponsor-ini" style="width:34px;height:34px;background:#ff6b35;font-size:12px">NS</span><div class="grow"><div style="font-size:.7rem;color:${done ? 'var(--ok)' : 'var(--muted)'};font-weight:700">${done ? '🎁 ¡Tu premio está listo!' : 'Reto del mes'}</div><strong style="font-size:.85rem">Octubre constante</strong></div></div><div class="m-row" style="margin-top:8px"><div class="grow">${bar(done ? 1 : .75)}</div><span style="font-size:.7rem">${done ? '12' : '9'}/12</span></div></div>`;
+  document.getElementById('ph-cover').innerHTML = header + hero(84) + meta + reto(true) +
+    `<div class="btn btn-primary" style="pointer-events:none;font-size:.85rem">＋ Registrar mi entrenamiento</div>`;
+  document.getElementById('ph-sol').innerHTML = header + hero(70) + meta;
+  document.getElementById('ph-member').innerHTML = header +
+    `<div class="m-card"><div class="m-row" style="justify-content:space-between"><strong style="font-size:.9rem">Octubre 2026</strong><span class="badge info" style="font-size:.62rem">Faltan 18 días</span></div>
+      <div class="m-row" style="margin-top:8px">${ring(.72, 86)}<div><div class="muted" style="font-size:.68rem">Meta</div><strong style="font-size:.9rem">Bajar a 76 kg</strong><div style="font-size:.72rem;font-weight:700;margin-top:4px">¡Vas muy bien! 🔥</div></div></div>
+      <div class="m-row" style="justify-content:space-around;text-align:center;margin-top:10px"><div><b>81</b><div class="muted" style="font-size:.6rem">Inicio</div></div><div><b style="color:var(--accent)">77.4</b><div class="muted" style="font-size:.6rem">Hoy</div></div><div><b style="color:var(--ok)">76</b><div class="muted" style="font-size:.6rem">Meta</div></div></div>
+      <div style="background:var(--surface-2);border-radius:10px;padding:8px;font-size:.7rem;margin-top:10px">📈 A este ritmo cerrarás el mes en <b>75.6 kg</b>. ¡Alcanzarías tu meta!</div></div>
+    <div class="m-card"><strong style="font-size:.85rem">Próximas clases</strong>
+      <div class="m-row" style="margin-top:8px;font-size:.75rem"><span class="color-dot" style="background:#f7c548"></span><div class="grow"><b>Funcional</b><div class="muted">Mié · 19:00 · Carlos</div></div><span class="badge ok" style="font-size:.6rem">Reservada</span></div>
+      <div class="m-row" style="margin-top:8px;font-size:.75rem"><span class="color-dot" style="background:#4cc9f0"></span><div class="grow"><b>Spinning</b><div class="muted">Jue · 18:00 · María José</div></div><span class="badge ok" style="font-size:.6rem">Reservada</span></div></div>
+    <div class="m-row" style="gap:6px;text-align:center"><div class="m-card grow"><b>11</b><div class="muted" style="font-size:.6rem">Días</div></div><div class="m-card grow"><b>8</b><div class="muted" style="font-size:.6rem">Clases</div></div><div class="m-card grow"><b>-3.6</b><div class="muted" style="font-size:.6rem">kg</div></div></div>`;
+  document.getElementById('ph-reto').innerHTML = header +
+    `<div style="font-weight:800;font-size:1.05rem">Retos y premios</div>
+    <div class="m-card" style="border-left:4px solid #f5c542;background:linear-gradient(135deg,rgba(245,197,66,.16),transparent 60%),var(--surface)"><div class="m-row"><span class="sponsor-ini" style="width:34px;height:34px;background:#f5c542;font-size:12px">SZ</span><div class="grow"><div style="font-size:.68rem;color:var(--muted)">🏆 Gran reto del año</div><strong style="font-size:.85rem">Reto anual 2026</strong></div></div>
+      <div style="background:var(--surface-2);border-radius:10px;padding:8px;font-size:.72rem;margin:8px 0">🎁 Premio: <b style="color:var(--accent-2)">1 mes gratis + kit deportivo</b></div><div class="m-row"><div class="grow">${bar(.5)}</div><span style="font-size:.7rem">2/4 metas</span></div></div>
+    <div class="m-card" style="border-left:4px solid #ff6b35"><div class="m-row"><span class="sponsor-ini" style="width:34px;height:34px;background:#ff6b35;font-size:12px">NS</span><div class="grow"><strong style="font-size:.85rem">Octubre constante</strong><div class="muted" style="font-size:.68rem">Patrocinado por NutriFit</div></div><span class="badge ok" style="font-size:.58rem">¡Completado!</span></div>
+      <div style="background:var(--surface-2);border-radius:10px;padding:8px;font-size:.72rem;margin:8px 0">🎁 Premio: <b style="color:var(--accent-2)">Batido de proteína gratis</b></div>
+      <div class="muted" style="font-size:.66rem;text-align:center">Muestra este código en recepción</div><div class="claim-code" style="font-size:1.2rem;padding:6px">R-7K2P</div></div>`;
+
+  // Panel del gimnasio (computadora)
+  const side = on => `<div class="side">${['Inicio', 'Socios', 'Clases', 'Personal', 'Asistencia', 'Retos', 'Reportes'].map(x => `<span class="${x === on ? 'on' : ''}">${x}</span>`).join('')}</div>`;
+  const tiles = `<div class="tiles">
+      <div class="tile"><div class="l">Socios activos</div><div class="v">128</div><div class="s muted">+9 este mes</div></div>
+      <div class="tile"><div class="l">Ingresos del mes</div><div class="v">$3.240</div><div class="s" style="color:var(--ok)">▲ 12%</div></div>
+      <div class="tile"><div class="l">Entradas hoy</div><div class="v">64</div><div class="s muted">en recepción</div></div>
+      <div class="tile"><div class="l">Por vencer</div><div class="v">9</div><div class="s" style="color:var(--warn)">5 vencidos</div></div></div>`;
+  const people = [['Sofía M.', look2, 'Vence en 2 d', 'warn'], ['José C.', look3, 'Vencido', 'bad'], ['Karla P.', { ...look2, shirt: '#3ddc97', hair: 'moño' }, 'Vence hoy', 'warn']];
+  const attention = `<div class="att"><b style="font-size:.7rem">Requieren atención</b>${people.map(([n, a, s, c]) => `<div class="it"><span class="dot-av">${Avatar.svg(a, 2, 18)}</span><span class="grow">${n}</span><span class="chip-s badge ${c}">${s}</span><span class="chip-s" style="background:rgba(61,220,151,.15);color:var(--ok)">WhatsApp</span><span class="chip-s" style="background:var(--accent);color:#fff">Cobrar</span></div>`).join('')}</div>`;
+  const vals = [2380, 2610, 2550, 2890, 2920, 3240];
+  const bars = `<div class="att"><b style="font-size:.7rem">Ingresos 6 meses</b><div style="display:flex;align-items:flex-end;gap:8px;height:70px;margin-top:6px">${vals.map((v, i) => `<div style="flex:1;background:${i === 5 ? 'var(--accent)' : 'var(--bar)'};height:${v / 3240 * 100}%;border-radius:4px"></div>`).join('')}</div></div>`;
+  document.getElementById('dash-a').innerHTML = side('Inicio') + `<div>${tiles}${attention}</div>`;
+  document.getElementById('dash-b').innerHTML = side('Inicio') + `<div>${tiles}${attention}${bars}</div>`;
+
+  // Evolución del avatar
+  document.getElementById('evo').innerHTML = [[1, 'Novato', 'ninguno', '0 pts'], [3, 'Atleta', 'banda', '250 pts'], [4, 'Guerrero', 'medalla', '500 pts'], [6, 'Leyenda', 'corona', '1400 pts']]
+    .map(([lv, n, acc, p]) => `<figure><div>${Avatar.svg({ ...look, accessory: acc }, lv, 150)}</div><figcaption>${n}<small>${p}</small></figcaption></figure>`).join('');
+
+  // Contacto y QR hacia la app del socio
+  document.getElementById('wa').href = 'https://wa.me/593980781862?text=' + encodeURIComponent('Hola, quiero implementar KadaMeta en mi gimnasio');
+  const demoUrl = new URL('../socio/', location.href).href;
+  document.getElementById('qr-url').textContent = demoUrl.replace(/^https?:\/\//, '');
+  try { new QRCode(document.getElementById('qr'), { text: demoUrl, width: 220, height: 220, colorDark: '#0e1014', colorLight: '#ffffff' }); }
+  catch (e) { document.getElementById('qr').style.display = 'none'; }
+
+  // Navegación: deslizar, flechas, teclado y puntos
+  const deck = document.getElementById('deck');
+  const slides = [...deck.children];
+  const dots = document.getElementById('dots');
+  dots.innerHTML = slides.map((_, i) => `<button aria-label="Ir a la diapositiva ${i + 1}"></button>`).join('');
+  const go = i => deck.scrollTo({ left: Math.max(0, Math.min(slides.length - 1, i)) * deck.clientWidth });
+  const idx = () => Math.round(deck.scrollLeft / deck.clientWidth);
+  const update = () => {
+    const i = idx();
+    [...dots.children].forEach((d, j) => d.classList.toggle('on', i === j));
+    document.getElementById('count').textContent = `${i + 1} / ${slides.length}`;
+    document.getElementById('prev').disabled = i === 0;
+    document.getElementById('next').disabled = i === slides.length - 1;
+  };
+  [...dots.children].forEach((d, i) => d.addEventListener('click', () => go(i)));
+  document.getElementById('prev').addEventListener('click', () => go(idx() - 1));
+  document.getElementById('next').addEventListener('click', () => go(idx() + 1));
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(idx() + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(idx() - 1); }
+  });
+  deck.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+  window.addEventListener('resize', () => go(idx()));
+  update();
+
+  const fs = document.getElementById('fs');
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (!req) fs.style.display = 'none';
+  fs.addEventListener('click', () => {
+    if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else req.call(el);
+  });
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js', { updateViaCache: 'none' }).catch(() => {});
+})();
+</script>
+</body>
+</html>
