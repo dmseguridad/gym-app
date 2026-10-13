@@ -107,6 +107,18 @@
     .tri, .six { grid-template-columns: 1fr 1fr; }
     .steps { grid-template-columns: 1fr 1fr; }
   }
+  /* Versión PDF / impresión: una diapositiva por página horizontal */
+  @page { size: 1180px 820px; margin: 0; }
+  @media print {
+    html, body { height: auto; overflow: visible; background: var(--bg); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .deck { display: block; height: auto; overflow: visible; }
+    .slide { width: 1180px; height: 820px; flex: none; overflow: hidden; break-after: page; page-break-after: always; padding: 40px 56px; align-items: center; background: var(--bg); }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .split { grid-template-columns: 1.05fr .95fr; }
+    .tri, .six { grid-template-columns: repeat(3, 1fr); }
+    .steps { grid-template-columns: repeat(4, 1fr); }
+    .controls, .fs, .count { display: none !important; }
+  }
   @media (max-width: 560px) { .tri, .six, .steps, .flow { grid-template-columns: 1fr; } .tiles { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
