@@ -61,6 +61,21 @@
   .reto-year { background: linear-gradient(135deg, rgba(245, 197, 66, .16), transparent 60%), var(--surface); border-color: rgba(245, 197, 66, .35); }
   .m-main > h2 { margin: 22px 0 10px; }
   .m-main > .reto + .reto { margin-top: 12px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 4px; gap: 4px; }
+  .seg a { text-align: center; padding: 9px 6px; border-radius: 10px; color: var(--muted); text-decoration: none; font-weight: 700; font-size: .9rem; }
+  .seg a.on { background: var(--accent); color: #fff; }
+  .liga-teaser { display: flex; gap: 12px; align-items: center; color: var(--text); text-decoration: none; background: linear-gradient(135deg, rgba(245, 197, 66, .14), transparent 60%), var(--surface); }
+  .lt-ico { font-size: 1.7rem; line-height: 1; }
+  .lt-pts, .lg-pts { font-weight: 800; font-size: 1.05rem; white-space: nowrap; }
+  .lg-pts small { font-size: .72rem; color: var(--muted); font-weight: 600; }
+  .lg-row { display: flex; gap: 10px; align-items: center; padding: 9px 8px; border-radius: 12px; }
+  .lg-row + .lg-row { margin-top: 2px; }
+  .lg-row.me { background: rgba(255, 107, 53, .14); outline: 1px solid rgba(255, 107, 53, .45); }
+  .lg-pos { width: 34px; text-align: center; font-weight: 800; color: var(--muted); font-size: 1rem; flex: none; }
+  .lg-big { font-size: 2rem; font-weight: 900; min-width: 56px; text-align: center; }
+  .lg-gap { text-align: center; color: var(--muted); letter-spacing: .3em; }
+  .liga-me { border: 2px solid var(--dc, var(--accent)); }
+  .liga-join { text-align: center; }
   .best-up { color: var(--ok); font-weight: 700; }
   .celebrate { text-align: center; }
   .celebrate .big { font-size: 3.5rem; line-height: 1; margin: 10px 0; }

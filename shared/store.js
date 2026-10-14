@@ -63,6 +63,36 @@
       { id: 'ch5', period: 'año', key: year, title: `Reto anual ${year}`, description: 'Cumple tu meta personal en 4 meses distintos del año.', metric: 'metas', target: 4, reward: '1 mes de membresía gratis + kit deportivo', sponsor: 'SportZone', sponsorLogo: null, limit: 5, color: '#f5c542' },
     ];
   }
+  /* Liga KadaMeta: ranking mensual entre gimnasios, solo con puntos verificados */
+  const LEAGUE_POINTS = { checkin: 10, clase: 5, reto: 50 };
+  const DIVISIONS = [
+    { key: 'bronce', name: 'Bronce', min: 1, max: 2, color: '#cd7f32' },
+    { key: 'plata', name: 'Plata', min: 3, max: 4, color: '#c9ced6' },
+    { key: 'oro', name: 'Oro', min: 5, max: 6, color: '#f5c542' },
+  ];
+  // Gimnasios de ejemplo para la demo (en producción vienen de la base de datos)
+  const RIVAL_GYMS = ['Titán Fitness', 'Power House', 'Zona Fit', 'Atlas Gym', 'Fénix Training'];
+  const RIVAL_NAMES = ['Andrea', 'Carlos', 'Valeria', 'Luis', 'María', 'Jorge', 'Daniela', 'Pedro', 'Fernanda', 'Kevin', 'Gabriela', 'Diego', 'Sofía', 'Javier', 'Paola', 'Bryan', 'Camila', 'Ricardo', 'Lucía', 'Esteban', 'Nicole', 'Adrián', 'Karen', 'Santiago', 'Melany', 'Joel', 'Emilia', 'Iván'];
+  const shortName = name => { const p = String(name || '').trim().split(/\s+/); return p.length > 1 ? `${p[0]} ${p[1][0]}.` : p[0]; };
+  function rivals(month, dayFactor) {
+    let s = [...month].reduce((a, c) => a * 31 + c.charCodeAt(0), 7) | 0;
+    const rnd = () => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+    const pick = arr => arr[Math.floor(rnd() * arr.length)];
+    const A = window.Avatar ? Avatar.OPTIONS : null;
+    const out = [];
+    RIVAL_GYMS.forEach((gym, gi) => {
+      const n = 12 + Math.floor(rnd() * 16), strength = 0.75 + rnd() * 0.5;
+      for (let k = 0; k < n; k++) {
+        const level = pick([1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 5, 6]);
+        const points = Math.round(dayFactor * (2 + rnd() * 13) * (0.7 + level * 0.1) * strength / 5) * 5;
+        out.push({
+          id: `r${gi}-${k}`, name: `${pick(RIVAL_NAMES)} ${'ABCDEGHLMNPRSTVZ'[Math.floor(rnd() * 16)]}.`, gym, level, points, mine: false,
+          avatar: A ? { skin: pick(A.skin), hair: pick(A.hair), hairColor: pick(A.hairColor), shirt: pick(A.shirt), accessory: level >= 4 && rnd() < .5 ? 'medalla' : 'ninguno' } : {},
+        });
+      }
+    });
+    return out;
+  }
   const claimCode = () => 'R-' + Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('');
 
   /* ---------- Datos de ejemplo (relativos a la fecha de hoy) ---------- */
@@ -209,6 +239,9 @@
       }
     });
 
+    // Liga: la mayoría de socios de ejemplo ya participa; el socio demo (m1) decide si se une
+    members.forEach((m, i) => { m.league = i !== 0 && i % 5 !== 0; });
+
     // Algunos socios ya reclamaron el reto "Primer paso" (para la demo del panel)
     const claims = [];
     members.slice(1, 12).forEach((m, i) => {
@@ -217,8 +250,8 @@
     });
 
     return {
-      version: 2,
-      settings: { gymName: 'Iron Gym', adminPin: '1234' },
+      version: 3,
+      settings: { gymName: 'Iron Gym', adminPin: '1234', league: true },
       plans, staff, classes, members, payments, bookings, checkins, logs,
       challenges: seedChallenges(today), claims,
     };
@@ -237,6 +270,12 @@
       const c = db.challenges.find(x => x.id === 'ch2');
       if (c && c.sponsor === 'NutriFit Suplementos') { c.sponsor = 'Marathon Sports'; c.reward = '10% de descuento en Marathon Sports'; c.sponsorLogo = null; }
       db.version = 2; save();
+    }
+    // v3: Liga KadaMeta (participación voluntaria)
+    if (db.version < 3) {
+      if (db.settings.league === undefined) db.settings.league = true;
+      db.members.forEach((m, i) => { if (m.league === undefined) m.league = m.id !== 'm1' && i % 5 !== 0; });
+      db.version = 3; save();
     }
   }
   function save() {
@@ -472,6 +511,40 @@
       db.claims.push(claim); save();
       return { ok: true, claim };
     },
+    /* Liga KadaMeta */
+    LEAGUE_POINTS, DIVISIONS,
+    shortName,
+    divisionOf: level => DIVISIONS.find(d => level >= d.min && level <= d.max) || DIVISIONS[0],
+    leaguePoints(m, month = U.month(U.today())) {
+      const inM = x => U.month(x.date) === month;
+      return db.checkins.filter(c => c.memberId === m.id && inM(c)).length * LEAGUE_POINTS.checkin
+        + db.bookings.filter(b => b.memberId === m.id && b.status === 'asistio' && inM(b)).length * LEAGUE_POINTS.clase
+        + db.claims.filter(c => c.memberId === m.id && inM(c)).length * LEAGUE_POINTS.reto;
+    },
+    league(month = U.month(U.today())) {
+      const today = U.today();
+      const [y, mm] = month.split('-').map(Number);
+      const daysInMonth = new Date(y, mm, 0).getDate();
+      const day = month === U.month(today) ? U.parseISO(today).getDate() : daysInMonth;
+      const own = db.settings.league
+        ? db.members.filter(m => m.league && this.status(m).key !== 'vencido').map(m => ({
+          id: m.id, name: shortName(m.name), gym: db.settings.gymName, level: this.level(m).level,
+          points: this.leaguePoints(m, month), avatar: m.avatar, mine: true,
+        }))
+        : [];
+      const entries = [...own, ...rivals(month, day)];
+      const byGym = {};
+      entries.forEach(e => { (byGym[e.gym] = byGym[e.gym] || []).push(e.points); });
+      const gyms = Object.entries(byGym).map(([name, pts]) => ({
+        name, members: pts.length, avg: Math.round(pts.reduce((a, b) => a + b, 0) / pts.length), mine: name === db.settings.gymName,
+      })).sort((a, b) => b.avg - a.avg);
+      return { month, entries, gyms, daysLeft: daysInMonth - day };
+    },
+    // Ranking de una división, ordenado de mayor a menor puntaje
+    leagueRanking(divKey, month) {
+      return this.league(month).entries.filter(e => this.divisionOf(e.level).key === divKey).sort((a, b) => b.points - a.points);
+    },
+
     findClaim: code => db.claims.find(x => x.code === String(code).trim().toUpperCase().replace(/^(?!R-)/, 'R-')),
     deliverClaim(id) { const x = byId('claims', id); if (x) { x.status = 'entregado'; x.deliveredDate = U.today(); save(); } },
     level(m) {

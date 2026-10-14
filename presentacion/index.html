@@ -114,6 +114,23 @@
     <div class="phone"><div class="scr" id="ph-reto"></div></div>
   </div></section>
 
+  <!-- 7a. Liga KadaMeta -->
+  <section class="slide" aria-label="Liga KadaMeta"><div class="inner split">
+    <div>
+      <div class="kicker">Liga KadaMeta</div>
+      <h2 class="t2">Tus socios compiten con otros gimnasios. <span class="grad">Tu gimnasio gana visibilidad.</span></h2>
+      <ul class="bul">
+        <li>Ranking mensual de socios y de gimnasios</li>
+        <li>Voluntario: cada socio decide si participa</li>
+        <li>Aparecen con su avatar y nombre corto: sin fotos ni datos personales</li>
+        <li>Solo cuentan puntos verificados en recepción</li>
+        <li>Divisiones por nivel: todos tienen oportunidad de ganar</li>
+      </ul>
+      <p class="lead" style="margin-top:16px"><span class="league-pill">🏆 "Gimnasio #1 de la Liga" es publicidad para ti</span></p>
+    </div>
+    <div class="phone"><div class="scr" id="ph-liga"></div></div>
+  </div></section>
+
   <!-- 7b. Aliados en salud -->
   <section class="slide" aria-label="Aliados en salud"><div class="inner">
     <div class="kicker">Aliados en salud</div>
@@ -261,6 +278,18 @@
   try { new QRCode(document.getElementById('qr'), { text: demoUrl, width: 220, height: 220, colorDark: '#0e1014', colorLight: '#ffffff' }); }
   catch (e) { document.getElementById('qr').style.display = 'none'; }
 
+  // Maqueta de la Liga KadaMeta
+  (function () {
+    const el = document.getElementById('ph-liga'); if (!el) return;
+    const lk = (skin, hair, shirt) => ({ skin, hair, hairColor: '#3b2314', shirt, accessory: 'ninguno' });
+    const rows = [['🥇', 'Andrea C.', 'Zona Fit', 245, lk('#e0ac69', 'largo', '#3ddc97'), 4], ['🥈', 'Esteban G.', 'Titán Fitness', 225, lk('#f1c27d', 'corto', '#3a4150'), 4], ['🥉', 'Paola D.', 'Atlas Gym', 215, lk('#8d5524', 'rizado', '#c77dff'), 3], ['#4', 'Gabriela N.', 'Zona Fit', 210, lk('#ffdbac', 'moño', '#f7c548'), 3], ['#5', 'Emilia M.', 'Atlas Gym', 200, lk('#c68642', 'largo', '#ff70a6'), 3], ['#6', 'Mateo R.', 'Tu Gimnasio', 190, { skin: '#f1c27d', hair: 'corto', hairColor: '#3b2314', shirt: '#ff6b35', accessory: 'medalla' }, 4]];
+    const gyms = [['🥇', 'Atlas Gym', 145], ['🥈', 'Tu Gimnasio', 133], ['🥉', 'Zona Fit', 131]];
+    el.innerHTML = `<div class="notch"></div>
+      <div class="m-row" style="justify-content:space-between"><strong style="font-size:1rem">🏆 Liga KadaMeta</strong><span class="badge info" style="font-size:.6rem">Octubre</span></div>
+      <div class="m-card" style="border:2px solid #c9ced6"><div class="m-row"><b style="font-size:1.5rem;min-width:40px;text-align:center">#6</b><div class="grow"><div class="muted" style="font-size:.62rem">Tu posición · División Plata</div><strong style="font-size:.82rem">Puesto 6 de 51</strong><div style="font-size:.64rem">Te faltan 15 pts para el puesto 5</div></div><b style="font-size:.85rem">190</b></div></div>
+      <div class="m-card" style="padding:8px"><strong style="font-size:.78rem;padding-left:4px">Top · División Plata</strong>${rows.map(([p, n, g, pts, av, lv]) => `<div class="lg-row ${n === 'Mateo R.' ? 'me' : ''}"><span class="lg-pos">${p}</span><span class="dot-av">${Avatar.svg(av, lv, 26)}</span><div class="grow"><b>${n}</b><div class="muted" style="font-size:.6rem">${g}</div></div><span class="lg-pts">${pts}</span></div>`).join('')}</div>
+      <div class="m-card" style="padding:8px"><strong style="font-size:.78rem;padding-left:4px">Gimnasios</strong>${gyms.map(([p, n, pts]) => `<div class="lg-row ${n === 'Tu Gimnasio' ? 'me' : ''}"><span class="lg-pos">${p}</span><div class="grow"><b>${n}</b></div><span class="lg-pts">${pts} pts</span></div>`).join('')}</div>`;
+  })();
 })();
 </script>
 <script src="../shared/deck.js"></script>

@@ -3,7 +3,7 @@
   const app = document.getElementById('app');
   const esc = U.esc;
   const SESSION = 'gym_member_session';
-  const st = { day: U.today(), metric: null, month: U.month(U.today()) };
+  const st = { day: U.today(), metric: null, month: U.month(U.today()), div: null };
   let me = null;
 
   const TABS = [['inicio', 'Inicio', 'home'], ['reservar', 'Reservar', 'calendar'], ['progreso', 'Progreso', 'trend'], ['mes', 'Mi mes', 'chart'], ['retos', 'Retos', 'trophy'], ['avatar', 'Avatar', 'user']];
@@ -20,13 +20,14 @@
     if (!me) return renderLogin();
     let page = route();
     if (!PAGES[page]) page = 'inicio';
+    const tab = page === 'liga' ? 'retos' : page; // la Liga vive dentro de la pestaña Retos
     const lv = GymDB.level(me);
     const scroll = window.scrollY;
     app.innerHTML = `<div class="m-app">
       <header class="m-header"><div class="row">${UI.logo(32)}<strong>${esc(GymDB.settings.gymName)}</strong></div>
         <button class="m-av" data-action="profile" aria-label="Mi perfil">${Avatar.face(me, lv.level, 40)}</button></header>
       <main class="m-main">${PAGES[page]()}</main>
-      <nav class="tabbar" aria-label="Secciones"><div class="tabbar-inner">${TABS.map(([k, l, i]) => `<a href="#/${k}" class="${k === page ? 'active' : ''}" ${k === page ? 'aria-current="page"' : ''}>${UI.icon(i, 22)}<span>${l}</span>${k === 'retos' && claimable().length ? '<span class="tab-dot" aria-label="Premio disponible"></span>' : ''}</a>`).join('')}</div></nav>
+      <nav class="tabbar" aria-label="Secciones"><div class="tabbar-inner">${TABS.map(([k, l, i]) => `<a href="#/${k}" class="${k === tab ? 'active' : ''}" ${k === tab ? 'aria-current="page"' : ''}>${UI.icon(i, 22)}<span>${l}</span>${k === 'retos' && claimable().length ? '<span class="tab-dot" aria-label="Premio disponible"></span>' : ''}</a>`).join('')}</div></nav>
     </div>`;
     if (render.lastPage === page) window.scrollTo(0, scroll); else window.scrollTo(0, 0);
     render.lastPage = page;
@@ -56,6 +57,25 @@
     if (gp.pct >= 0.3) return 'Buen avance. Un empujón más cada semana 💪';
     return 'Recién empiezas: la constancia hace la diferencia.';
   }
+  /* ---------- Liga KadaMeta ---------- */
+  const retosSwitch = on => `<div class="seg" role="tablist"><a href="#/retos" class="${on === 'retos' ? 'on' : ''}" role="tab" aria-selected="${on === 'retos'}">🎁 Retos y premios</a><a href="#/liga" class="${on === 'liga' ? 'on' : ''}" role="tab" aria-selected="${on === 'liga'}">🏆 Liga</a></div>`;
+  const medal = i => ['🥇', '🥈', '🥉'][i] || `#${i + 1}`;
+  function myLeague() {
+    const div = GymDB.divisionOf(GymDB.level(me).level);
+    const list = GymDB.leagueRanking(div.key);
+    return { div, list, pos: list.findIndex(e => e.id === me.id) };
+  }
+  function ligaTeaser() {
+    if (!GymDB.settings.league) return '';
+    if (!me.league) return `<a class="card liga-teaser" href="#/liga"><span class="lt-ico">🏆</span><div class="grow"><strong>Únete a la Liga KadaMeta</strong><div class="small muted">Compite cada mes con socios de otros gimnasios</div></div><span class="muted" aria-hidden="true">›</span></a>`;
+    const { div, list, pos } = myLeague();
+    return `<a class="card liga-teaser" href="#/liga"><span class="lt-ico">🏆</span><div class="grow"><div class="small muted">Liga KadaMeta · División ${div.name}</div><strong>Vas en el puesto ${pos + 1} de ${list.length}</strong></div><span class="lt-pts">${list[pos].points} pts</span></a>`;
+  }
+  const leagueRow = (e, i) => `<div class="lg-row ${e.id === me.id ? 'me' : ''}"><span class="lg-pos">${medal(i)}</span>
+    <span class="mini-av">${Avatar.svg(e.avatar, e.level, 38)}</span>
+    <div class="grow"><strong>${esc(e.name)}${e.id === me.id ? ' <span class="badge info">Tú</span>' : ''}</strong><div class="small muted">${esc(e.gym)}</div></div>
+    <span class="lg-pts">${e.points}<small> pts</small></span></div>`;
+
   // Tarjeta del reto más cercano a completarse (o con premio listo) en el inicio
   function retoTeaser() {
     const ranked = GymDB.currentChallenges().filter(c => !GymDB.memberClaim(me.id, c.id) && GymDB.prizesLeft(c) !== 0)
@@ -124,6 +144,7 @@
         : `<p class="muted">Define qué quieres lograr este mes y te mostraremos tu avance día a día.</p><button class="btn btn-primary" data-action="goal">Definir mi meta</button>`}
       </section>
       ${retoTeaser()}
+      ${ligaTeaser()}
       <button class="btn btn-primary btn-block btn-lg" data-action="log">${todayLog ? `${UI.icon('edit', 18)} Editar mi registro de hoy` : `${UI.icon('plus', 20)} Registrar mi entrenamiento de hoy`}</button>
       <section class="card"><div class="row between"><h2>Próximas clases</h2><a href="#/reservar" class="small">Reservar</a></div>
         ${up.length ? up.map(bookingItem).join('') : '<p class="muted small" style="margin:0">No tienes clases reservadas.</p>'}
@@ -228,11 +249,60 @@
       ${prevGoal && st.month === cur ? `<section class="card"><div class="row between"><div><div class="muted small">Mes anterior</div><strong>${esc(GymDB.goalLabel(prevGoal.goal))}</strong></div>${prevGoal.pct >= 1 ? '<span class="badge ok">🏆 Cumplida</span>' : `<span class="badge warn">${Math.round(prevGoal.pct * 100)}%</span>`}</div></section>` : ''}`;
     },
 
+    liga() {
+      const L = GymDB.league();
+      const P = GymDB.LEAGUE_POINTS;
+      const monthName = U.monthName(L.month);
+      if (!GymDB.settings.league) return `${retosSwitch('liga')}<h1>Liga KadaMeta</h1><div class="card empty">Tu gimnasio todavía no participa en la Liga KadaMeta.</div>`;
+      const myDiv = GymDB.divisionOf(GymDB.level(me).level);
+      if (!st.div) st.div = myDiv.key;
+      const div = GymDB.DIVISIONS.find(d => d.key === st.div);
+      const list = GymDB.leagueRanking(div.key);
+      const pos = list.findIndex(e => e.id === me.id);
+      let mine = '';
+      if (!me.league) {
+        mine = `<section class="card liga-join"><div class="lt-ico" style="font-size:2rem">🏆</div><h2>Únete a la Liga</h2>
+          <p class="muted">Compite cada mes con socios de otros gimnasios KadaMeta. Es voluntario y puedes salir cuando quieras.</p>
+          <div class="note small">Aparecerás como <strong>${esc(GymDB.shortName(me.name))}</strong>, con tu <strong>avatar</strong> y el nombre de tu gimnasio. Tu foto, tu apellido completo y tus datos personales <strong>no se muestran</strong>.</div>
+          <button class="btn btn-primary btn-block mt" data-action="league-join">Unirme a la Liga</button></section>`;
+      } else {
+        const me0 = GymDB.leagueRanking(myDiv.key);
+        const p0 = me0.findIndex(e => e.id === me.id);
+        const gap = p0 > 0 ? me0[p0 - 1].points - me0[p0].points : 0;
+        mine = `<section class="card liga-me" style="--dc:${myDiv.color}"><div class="row"><span class="lg-big">${p0 < 3 ? medal(p0) : '#' + (p0 + 1)}</span>
+          <div class="grow"><div class="small muted">Tu posición · División ${myDiv.name}</div><strong style="font-size:1.15rem">Puesto ${p0 + 1} de ${me0.length}</strong>
+          <div class="small">${p0 === 0 ? '¡Vas primero! Defiende tu lugar 🔥' : `Te faltan <strong>${gap + 5} pts</strong> para pasar al puesto ${p0}`}</div></div>
+          <span class="lg-pts">${me0[p0].points}<small> pts</small></span></div></section>`;
+      }
+      const top = list.slice(0, 10);
+      const meOut = pos >= 10;
+      return `
+      ${retosSwitch('liga')}
+      <div class="row between"><h1 style="margin:0">Liga KadaMeta</h1><span class="badge info">${U.cap(monthName)} · faltan ${L.daysLeft} días</span></div>
+      ${mine}
+      <div class="chips">${GymDB.DIVISIONS.map(d => `<button class="chip ${d.key === div.key ? 'active' : ''}" data-action="div" data-k="${d.key}">División ${d.name}${d.key === myDiv.key ? ' · tú' : ''}</button>`).join('')}</div>
+      <section class="card"><h2>Top 10 · División ${div.name}</h2>
+        ${top.map(leagueRow).join('')}
+        ${meOut ? `<div class="lg-gap">···</div>${leagueRow(list[pos], pos)}` : ''}
+      </section>
+      <section class="card"><h2>Gimnasios</h2><p class="muted small" style="margin-top:-4px">Promedio de puntos por socio participante: los gimnasios pequeños también pueden ganar.</p>
+        ${L.gyms.map((g, i) => `<div class="lg-row ${g.mine ? 'me' : ''}"><span class="lg-pos">${medal(i)}</span><div class="grow"><strong>${esc(g.name)}</strong><div class="small muted">${g.members} socios en la liga</div></div><span class="lg-pts">${g.avg}<small> pts</small></span></div>`).join('')}
+      </section>
+      <section class="card"><h2>Cómo sumar puntos en la Liga</h2>
+        <div class="list-item"><span class="grow">Entrada registrada en recepción</span><strong>+${P.checkin}</strong></div>
+        <div class="list-item"><span class="grow">Clase a la que asististe</span><strong>+${P.clase}</strong></div>
+        <div class="list-item"><span class="grow">Reto completado</span><strong>+${P.reto}</strong></div>
+        <p class="muted small" style="margin:10px 0 0">Solo cuentan actividades verificadas por tu gimnasio. La liga se reinicia el primer día de cada mes y compites con socios de tu mismo nivel.</p>
+        ${me.league ? '<button class="btn btn-sm mt" data-action="league-leave">Salir de la Liga</button>' : ''}
+      </section>`;
+    },
+
     retos() {
       const cur = GymDB.currentChallenges();
       const year = cur.filter(c => c.period === 'año'), month = cur.filter(c => c.period === 'mes');
       const mine = GymDB.memberClaims(me.id);
       return `
+      ${retosSwitch('retos')}
       <h1>Retos y premios</h1>
       <p class="muted small" style="margin-top:-4px">Completa retos, reclama tu premio y muéstralo en recepción. Cada reto completado suma <strong>+${GymDB.POINTS.reto} pts</strong>.</p>
       ${year.length ? `<h2>🏆 Gran reto del año</h2>${year.map(retoCard).join('')}` : ''}
@@ -367,6 +437,12 @@
   const ACTIONS = {
     close: () => UI.closeModal(),
     profile: () => profileModal(),
+    div(d) { st.div = d.k; render(); },
+    'league-join'() { GymDB.saveMember({ id: me.id, league: true }); st.div = null; UI.toast('🏆 ¡Bienvenido a la Liga KadaMeta!'); render(); },
+    'league-leave'() {
+      if (!confirm('¿Salir de la Liga? Ya no aparecerás en el ranking. Puedes volver cuando quieras.')) return;
+      GymDB.saveMember({ id: me.id, league: false }); UI.toast('Saliste de la Liga'); render();
+    },
     claim(d) {
       const r = GymDB.claim(me.id, d.id);
       if (!r.ok) { UI.toast(r.error, 'bad'); return; }

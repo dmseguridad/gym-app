@@ -219,6 +219,7 @@
           ${pending.map(x => { const m = GymDB.member(x.memberId), c = GymDB.challenge(x.challengeId); if (!m || !c) return ''; return `<tr><td><div class="row">${avatarMini(m)}<strong>${esc(m.name)}</strong></div></td><td><div>${esc(c.reward)}</div><div class="small muted">${esc(c.title)} · ${esc(c.sponsor)}</div></td><td class="nowrap"><strong>${x.code}</strong></td><td class="hide-sm nowrap">${U.fmtDate(x.date)}</td><td class="actions"><button class="btn btn-sm btn-primary" data-action="deliver" data-id="${x.id}">Entregar</button></td></tr>`; }).join('')}
         </tbody></table></div>` : '<div class="empty">No hay premios pendientes</div>'}
       </section>
+      ${leagueCard()}
       <div class="grid g2 mt">${cur.map(c => challengeCard(c, active)).join('') || '<div class="card empty">No hay retos activos. Crea el primero.</div>'}</div>
       ${past.length ? `<section class="card mt"><h2>Retos anteriores</h2>
         ${past.map(c => `<div class="list-item clickable" data-action="edit-challenge" data-id="${c.id}">${UI.sponsor(c, 34)}<div class="grow"><strong>${esc(c.title)}</strong><div class="small muted">${esc(GymDB.periodLabel(c))} · ${esc(c.sponsor)}</div></div><span class="small muted">${GymDB.claimsFor(c.id).length} premios</span></div>`).join('')}
@@ -324,6 +325,31 @@
         </tr>`;
       }).join('')}
     </tbody></table></div>`;
+  }
+
+  // Posición del gimnasio en la Liga KadaMeta y sus mejores socios del mes
+  function leagueCard() {
+    if (!GymDB.settings.league) {
+      return `<section class="card mt"><div class="row between wrap"><div><h2 style="margin:0">🏆 Liga KadaMeta</h2><div class="muted small">Tu gimnasio no participa en el ranking entre gimnasios.</div></div>
+        <button class="btn btn-primary" data-action="league-toggle">Participar en la Liga</button></div></section>`;
+    }
+    const L = GymDB.league();
+    const pos = L.gyms.findIndex(g => g.mine);
+    const g = L.gyms[pos];
+    const mine = L.entries.filter(e => e.mine).sort((a, b) => b.points - a.points).slice(0, 5);
+    const total = GymDB.members().filter(m => GymDB.status(m).key !== 'vencido').length;
+    const medal = i => ['🥇', '🥈', '🥉'][i] || `#${i + 1}`;
+    return `<section class="card mt"><div class="row between wrap"><div><h2 style="margin:0">🏆 Liga KadaMeta · ${U.cap(U.monthName(L.month))}</h2>
+        <div class="muted small">Ranking mensual entre gimnasios. Los socios participan de forma voluntaria y aparecen con su avatar y nombre corto.</div></div>
+        <button class="btn btn-sm" data-action="league-toggle">Dejar de participar</button></div>
+      <div class="grid g4 mt">
+        ${stat('Posición del gimnasio', g ? `${medal(pos)} de ${L.gyms.length}` : '—', 'por promedio de puntos')}
+        ${stat('Promedio por socio', g ? `${g.avg} pts` : '—', 'este mes')}
+        ${stat('Socios en la liga', g ? g.members : 0, `de ${total} socios activos`)}
+        ${stat('Termina en', `${L.daysLeft} días`, 'se reinicia cada mes')}
+      </div>
+      ${mine.length ? `<h3>Tus socios con más puntos</h3>${mine.map((e, i) => `<div class="list-item"><span style="width:28px;text-align:center;font-weight:800">${i + 1}</span><span class="mini-av">${Avatar.svg(e.avatar, e.level, 38)}</span><div class="grow"><strong>${esc(e.name)}</strong><div class="small muted">División ${GymDB.divisionOf(e.level).name}</div></div><strong>${e.points} pts</strong></div>`).join('')}` : '<p class="muted small mt">Aún ningún socio se unió a la liga.</p>'}
+    </section>`;
   }
 
   function challengeStats(c, members) {
@@ -601,6 +627,11 @@ Premio: ${c.reward}
     'delete-plan'(d) { GymDB.removePlan(d.id); UI.closeModal(); UI.toast('Plan eliminado'); render(); },
     'checkin-member': d => doCheckin(d.id),
     'new-challenge': () => challengeForm(),
+    'league-toggle'() {
+      const on = !GymDB.settings.league;
+      if (!on && !confirm('¿Dejar de participar en la Liga KadaMeta? Tus socios ya no aparecerán en el ranking entre gimnasios.')) return;
+      GymDB.saveSettings({ league: on }); UI.toast(on ? 'Tu gimnasio participa en la Liga' : 'Tu gimnasio salió de la Liga'); render();
+    },
     'edit-challenge': d => challengeForm(d.id),
     'delete-challenge'(d) {
       if (!confirm('¿Eliminar este reto? También se borran sus premios reclamados.')) return;

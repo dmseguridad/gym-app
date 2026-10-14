@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="../shared/deck.css">
 </head>
 <body>
-<div class="count" id="count">1 / 8</div>
+<div class="count" id="count">1 / 9</div>
 <button class="nav-btn fs" id="fs" aria-label="Pantalla completa" title="Pantalla completa"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 
 <main class="deck" id="deck">
@@ -84,6 +84,22 @@
         <li>Premios de marcas aliadas: descuentos, productos y más</li>
         <li>Tu avance se cuenta solo, sin hacer nada extra</li>
         <li>Reclamas tu premio con un código en recepción</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- 5b. Liga KadaMeta -->
+  <section class="slide" aria-label="Liga KadaMeta"><div class="inner split">
+    <div class="phone"><div class="scr" id="ph-liga"></div></div>
+    <div>
+      <div class="kicker">Liga KadaMeta</div>
+      <h2 class="t2">Compite con socios de <span class="grad">otros gimnasios</span></h2>
+      <ul class="bul">
+        <li>Un ranking nuevo cada mes: todos empiezan de cero</li>
+        <li>Compites en tu división, con gente de tu mismo nivel</li>
+        <li>Suma puntos por ir al gym, asistir a clases y completar retos</li>
+        <li>Defiende el nombre de tu gimnasio en el ranking</li>
+        <li>Participas solo si quieres: apareces con tu avatar, sin foto</li>
       </ul>
     </div>
   </div></section>
@@ -183,6 +199,18 @@
   document.getElementById('qr-url').textContent = demoUrl.replace(/^https?:\/\//, '');
   try { new QRCode(document.getElementById('qr'), { text: demoUrl, width: 220, height: 220, colorDark: '#0e1014', colorLight: '#ffffff' }); }
   catch (e) { document.getElementById('qr').style.display = 'none'; }
+  // Maqueta de la Liga KadaMeta
+  (function () {
+    const el = document.getElementById('ph-liga'); if (!el) return;
+    const lk = (skin, hair, shirt) => ({ skin, hair, hairColor: '#3b2314', shirt, accessory: 'ninguno' });
+    const rows = [['🥇', 'Andrea C.', 'Zona Fit', 245, lk('#e0ac69', 'largo', '#3ddc97'), 4], ['🥈', 'Esteban G.', 'Titán Fitness', 225, lk('#f1c27d', 'corto', '#3a4150'), 4], ['🥉', 'Paola D.', 'Atlas Gym', 215, lk('#8d5524', 'rizado', '#c77dff'), 3], ['#4', 'Gabriela N.', 'Zona Fit', 210, lk('#ffdbac', 'moño', '#f7c548'), 3], ['#5', 'Emilia M.', 'Atlas Gym', 200, lk('#c68642', 'largo', '#ff70a6'), 3], ['#6', 'Mateo R.', 'Tu Gimnasio', 190, { skin: '#f1c27d', hair: 'corto', hairColor: '#3b2314', shirt: '#ff6b35', accessory: 'medalla' }, 4]];
+    const gyms = [['🥇', 'Atlas Gym', 145], ['🥈', 'Tu Gimnasio', 133], ['🥉', 'Zona Fit', 131]];
+    el.innerHTML = `<div class="notch"></div>
+      <div class="m-row" style="justify-content:space-between"><strong style="font-size:1rem">🏆 Liga KadaMeta</strong><span class="badge info" style="font-size:.6rem">Octubre</span></div>
+      <div class="m-card" style="border:2px solid #c9ced6"><div class="m-row"><b style="font-size:1.5rem;min-width:40px;text-align:center">#6</b><div class="grow"><div class="muted" style="font-size:.62rem">Tu posición · División Plata</div><strong style="font-size:.82rem">Puesto 6 de 51</strong><div style="font-size:.64rem">Te faltan 15 pts para el puesto 5</div></div><b style="font-size:.85rem">190</b></div></div>
+      <div class="m-card" style="padding:8px"><strong style="font-size:.78rem;padding-left:4px">Top · División Plata</strong>${rows.map(([p, n, g, pts, av, lv]) => `<div class="lg-row ${n === 'Mateo R.' ? 'me' : ''}"><span class="lg-pos">${p}</span><span class="dot-av">${Avatar.svg(av, lv, 26)}</span><div class="grow"><b>${n}</b><div class="muted" style="font-size:.6rem">${g}</div></div><span class="lg-pts">${pts}</span></div>`).join('')}</div>
+      <div class="m-card" style="padding:8px"><strong style="font-size:.78rem;padding-left:4px">Gimnasios</strong>${gyms.map(([p, n, pts]) => `<div class="lg-row ${n === 'Tu Gimnasio' ? 'me' : ''}"><span class="lg-pos">${p}</span><div class="grow"><b>${n}</b></div><span class="lg-pts">${pts} pts</span></div>`).join('')}</div>`;
+  })();
 })();
 </script>
 <script src="../shared/deck.js"></script>
