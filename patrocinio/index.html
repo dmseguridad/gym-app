@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KadaMeta · Patrocinio</title>
+<meta name="description" content="Propuesta de patrocinio de KadaMeta para marcas.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="../shared/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../shared/icon.svg">
+<meta name="theme-color" content="#0e1014">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KadaMeta Marcas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="../shared/styles.css">
+<link rel="stylesheet" href="../shared/deck.css">
+<style>
+  .brand-ph { display: grid; place-items: center; border: 2px dashed var(--accent-2); color: var(--accent-2); background: rgba(255, 166, 43, .1); border-radius: 10px; font-weight: 900; font-size: 10px; letter-spacing: .04em; text-align: center; line-height: 1.1; flex: none; }
+  .phones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px; }
+  .phones .phone { width: 100%; max-width: 260px; }
+  .phones .scr { min-height: 380px; }
+  .phones figcaption { text-align: center; margin-top: 10px; font-weight: 700; }
+  .phones figcaption small { display: block; color: var(--muted); font-weight: 500; }
+  .phones figure { margin: 0; }
+  .aud { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 26px; }
+  .aud .card { padding: 20px; }
+  .aud .emo { font-size: 2rem; }
+  .aud h3 { margin: 10px 0 6px; font-size: 1.05rem; }
+  .aud p { margin: 0; color: var(--muted); font-size: .92rem; }
+  .cats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .cats span { background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; font-weight: 600; }
+  .why { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .why .card { padding: 22px; display: flex; gap: 14px; align-items: flex-start; }
+  .why .emo { font-size: 1.8rem; line-height: 1; }
+  .why h3 { margin: 0 0 6px; font-size: 1.12rem; }
+  .why p { margin: 0; color: var(--muted); }
+  .report { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px; }
+  .report .rr { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 1.02rem; }
+  .report .rr:last-child { border-bottom: 0; }
+  .report .rr b { font-size: 1.3rem; }
+  .ex-tag { display: inline-block; background: var(--surface-2); color: var(--muted); border-radius: 8px; padding: 3px 10px; font-size: .78rem; font-weight: 700; margin-bottom: 12px; }
+  .packs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; align-items: stretch; }
+  .pack { padding: 24px; display: flex; flex-direction: column; }
+  .pack h3 { font-size: 1.3rem; margin: 6px 0 4px; }
+  .pack .who { color: var(--muted); font-size: .92rem; margin-bottom: 8px; }
+  .pack ul { list-style: none; padding: 0; margin: 8px 0 0; }
+  .pack li { padding: 7px 0 7px 26px; position: relative; font-size: .95rem; }
+  .pack li::before { content: '✓'; position: absolute; left: 2px; color: var(--ok); font-weight: 900; }
+  .pack.star { border: 2px solid var(--accent); background: linear-gradient(160deg, rgba(255, 107, 53, .14), transparent 55%), var(--surface); }
+  .pack .tag { align-self: flex-start; background: var(--accent); color: #fff; border-radius: 999px; padding: 4px 12px; font-size: .75rem; font-weight: 800; }
+  .pack .tag.soft { background: var(--surface-2); color: var(--muted); }
+  .pack .price { margin-top: auto; padding-top: 14px; color: var(--muted); font-size: .9rem; }
+  .gives { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+  .gives div { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: center; font-weight: 600; }
+  .gives div span { display: block; font-size: 1.6rem; margin-bottom: 4px; }
+  @media (max-width: 900px), (orientation: portrait) {
+    .phones { grid-template-columns: 1fr; justify-items: center; }
+    .aud { grid-template-columns: 1fr 1fr; }
+    .why, .packs { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) { .aud, .gives { grid-template-columns: 1fr; } }
+  @media print {
+    .phones { grid-template-columns: repeat(3, 1fr); }
+    .aud { grid-template-columns: repeat(4, 1fr); }
+    .why { grid-template-columns: 1fr 1fr; }
+    .packs { grid-template-columns: repeat(3, 1fr); }
+    .gives { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="count" id="count">1 / 10</div>
+<button class="nav-btn fs" id="fs" aria-label="Pantalla completa" title="Pantalla completa"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+
+<main class="deck" id="deck">
+
+  <!-- 1. Portada -->
+  <section class="slide" aria-label="Portada"><div class="inner split">
+    <div>
+      <div class="brand-xl"><img src="../shared/icon.svg" alt=""><span>Kada<b>Meta</b></span></div>
+      <div class="kicker">Propuesta de patrocinio</div>
+      <h1 class="t1">Tu marca, en el momento en que <span class="grad">cumplen su meta</span>.</h1>
+      <p class="lead">Patrocina retos dentro de la app que usan los socios de los gimnasios para entrenar, medir su avance y ganar premios.</p>
+    </div>
+    <div class="phone"><div class="scr" id="ph-cover"></div></div>
+  </div></section>
+
+  <!-- 2. Qué es KadaMeta -->
+  <section class="slide" aria-label="Qué es KadaMeta"><div class="inner split">
+    <div>
+      <div class="kicker">Qué es KadaMeta</div>
+      <h2 class="t2">Un sistema para gimnasios con una app para sus socios</h2>
+      <p class="lead">El gimnasio administra socios, pagos y clases. Cada socio tiene su app para:</p>
+      <ul class="bul">
+        <li>Reservar clases y registrar su entrenamiento</li>
+        <li>Ponerse una meta cada mes y ver su avance día a día</li>
+        <li>Subir de nivel con un avatar que se hace más fuerte</li>
+        <li>Completar <strong>retos con premios</strong>: aquí entra tu marca</li>
+      </ul>
+    </div>
+    <div class="phone"><div class="scr" id="ph-what"></div></div>
+  </div></section>
+
+  <!-- 3. Audiencia -->
+  <section class="slide" aria-label="La audiencia"><div class="inner">
+    <div class="kicker">La audiencia</div>
+    <h2 class="t2">Personas que entrenan, cuidan su salud<br>y <span class="grad">compran para lograrlo</span></h2>
+    <div class="aud">
+      <div class="card"><div class="emo">🏋️</div><h3>Activas</h3><p>Van al gimnasio varias veces por semana.</p></div>
+      <div class="card"><div class="emo">🎯</div><h3>Con metas claras</h3><p>Quieren bajar de peso, ganar fuerza o mantenerse.</p></div>
+      <div class="card"><div class="emo">📱</div><h3>Conectadas</h3><p>Abren la app para registrar y revisar su avance.</p></div>
+      <div class="card"><div class="emo">🛍️</div><h3>Compradoras</h3><p>Invierten en productos que las ayudan a avanzar.</p></div>
+    </div>
+    <p class="lead" style="margin-top:26px">Ideal para marcas de:</p>
+    <div class="cats"><span>Suplementos y nutrición</span><span>Ropa y calzado deportivo</span><span>Hidratación y bebidas</span><span>Comida saludable</span><span>Salud y bienestar</span><span>Tecnología deportiva</span></div>
+  </div></section>
+
+  <!-- 4. Tu marca en la app -->
+  <section class="slide" aria-label="Tu marca en la app"><div class="inner">
+    <div class="kicker">Dónde aparece tu marca</div>
+    <h2 class="t2">Presente en todo el recorrido del reto</h2>
+    <div class="phones">
+      <figure><div class="phone"><div class="scr" id="ph-a"></div></div><figcaption>En el inicio<small>Cada vez que abren la app</small></figcaption></figure>
+      <figure><div class="phone"><div class="scr" id="ph-b"></div></div><figcaption>En el reto<small>Con tu logo y tu premio</small></figcaption></figure>
+      <figure><div class="phone"><div class="scr" id="ph-c"></div></div><figcaption>Al ganar<small>El momento de celebración</small></figcaption></figure>
+    </div>
+  </div></section>
+
+  <!-- 5. Cómo funciona -->
+  <section class="slide" aria-label="Cómo funciona"><div class="inner">
+    <div class="kicker">Cómo funciona</div>
+    <h2 class="t2">Un reto patrocinado en 4 pasos</h2>
+    <div class="steps">
+      <div class="card step"><div class="n">1</div><h3>Definimos el reto</h3><p>Ej. "Entrena 12 días este mes", con tu logo y tu premio.</p></div>
+      <div class="card step"><div class="n">2</div><h3>Los socios participan</h3><p>Ven su avance todos los días. El progreso se calcula solo.</p></div>
+      <div class="card step"><div class="n">3</div><h3>Reclaman el premio</h3><p>Reciben un código único, válido una sola vez.</p></div>
+      <div class="card step"><div class="n">4</div><h3>Recibes el reporte</h3><p>Cuántos participaron, completaron y canjearon.</p></div>
+    </div>
+    <p class="lead" style="margin-top:24px">Tú decides la cantidad de premios: el reto se cierra solo cuando se agotan.</p>
+  </div></section>
+
+  <!-- 6. Por qué funciona -->
+  <section class="slide" aria-label="Por qué funciona"><div class="inner">
+    <div class="kicker">Mejor que un anuncio</div>
+    <h2 class="t2">Tu marca asociada al esfuerzo y al logro</h2>
+    <div class="why">
+      <div class="card"><div class="emo">🏆</div><div><h3>Se gana, no se regala</h3><p>El premio llega después de cumplir. Tu marca queda ligada a un logro personal.</p></div></div>
+      <div class="card"><div class="emo">👀</div><div><h3>Atención durante semanas</h3><p>El socio revisa su reto varios días al mes, no lo ve una sola vez.</p></div></div>
+      <div class="card"><div class="emo">📊</div><div><h3>Resultados medibles</h3><p>Sabes exactamente cuántas personas participaron y ganaron.</p></div></div>
+      <div class="card"><div class="emo">🎯</div><div><h3>Sin desperdicio</h3><p>Solo llegas a personas que entrenan, el público exacto para tu producto.</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- 7. Reporte -->
+  <section class="slide" aria-label="Reporte de resultados"><div class="inner split">
+    <div>
+      <div class="kicker">Reporte de resultados</div>
+      <h2 class="t2">Al cierre de cada reto recibes tus números</h2>
+      <ul class="bul">
+        <li>Socios que tienen tu marca en su app</li>
+        <li>Cuántos participaron en el reto</li>
+        <li>Cuántos lo completaron</li>
+        <li>Cuántos premios se reclamaron y entregaron</li>
+      </ul>
+      <p class="lead" style="margin-top:18px">Te llega por WhatsApp, listo para compartir con tu equipo.</p>
+    </div>
+    <div class="report">
+      <span class="ex-tag">Ejemplo de reporte</span>
+      <div class="row" style="margin-bottom:10px"><span class="brand-ph" style="width:46px;height:46px">TU<br>LOGO</span><div><strong>Reto "Octubre constante"</strong><div class="muted small">Gimnasio de ejemplo · Octubre</div></div></div>
+      <div class="rr"><span>Socios con tu marca en su app</span><b>120</b></div>
+      <div class="rr"><span>Participaron</span><b>74</b></div>
+      <div class="rr"><span>Completaron el reto</span><b style="color:var(--ok)">31</b></div>
+      <div class="rr"><span>Premios reclamados</span><b>20</b></div>
+      <div class="rr"><span>Premios entregados</span><b>18</b></div>
+      <p class="muted small" style="margin:10px 0 0">Cifras ilustrativas. Tus reportes muestran datos reales de cada reto.</p>
+    </div>
+  </div></section>
+
+  <!-- 8. Paquetes -->
+  <section class="slide" aria-label="Formas de participar"><div class="inner">
+    <div class="kicker">Formas de participar</div>
+    <h2 class="t2">Elige cómo quieres estar</h2>
+    <div class="packs">
+      <div class="card pack"><span class="tag soft">Para empezar</span><h3>Reto del mes</h3><div class="who">Un reto en un gimnasio</div>
+        <ul><li>Tu logo y tu premio en el reto</li><li>Duración: un mes</li><li>Reporte al cierre</li></ul>
+        <div class="price">Aporte: premios o descuentos</div></div>
+      <div class="card pack"><span class="tag soft">Más alcance</span><h3>Reto de temporada</h3><div class="who">Varios gimnasios, varios meses</div>
+        <ul><li>Retos mensuales en todos los gimnasios del plan</li><li>Gran reto de temporada destacado</li><li>Reporte mensual</li></ul>
+        <div class="price">Aporte: premios + aporte a convenir</div></div>
+      <div class="card pack star"><span class="tag">Recomendado</span><h3>Patrocinador fundador</h3><div class="who">La marca oficial de tu categoría</div>
+        <ul><li>Exclusividad: ninguna marca competidora</li><li>En todos los gimnasios que se sumen</li><li>Tu logo en la presentación y la web de KadaMeta</li><li>Condiciones de lanzamiento</li></ul>
+        <div class="price">Aporte: a convenir</div></div>
+    </div>
+  </div></section>
+
+  <!-- 9. Patrocinador fundador -->
+  <section class="slide" aria-label="Patrocinador fundador"><div class="inner split">
+    <div>
+      <div class="kicker">Por qué ahora</div>
+      <h2 class="t2">Estamos lanzando. <span class="grad">Los primeros eligen.</span></h2>
+      <p class="lead">KadaMeta está empezando a llegar a gimnasios. Las marcas que entren ahora crecen junto con la app y aseguran su categoría antes que la competencia.</p>
+      <ul class="bul">
+        <li>Exclusividad en tu categoría desde el inicio</li>
+        <li>Presencia en cada gimnasio nuevo que se suma</li>
+        <li>Participas en el diseño de los retos</li>
+        <li>Condiciones de lanzamiento que no se repetirán</li>
+      </ul>
+    </div>
+    <div>
+      <p class="lead" style="margin-bottom:6px"><strong style="color:var(--text)">Tu marca puede aportar con:</strong></p>
+      <div class="gives">
+        <div><span>🎁</span>Productos</div>
+        <div><span>🏷️</span>Descuentos</div>
+        <div><span>🎟️</span>Vouchers</div>
+      </div>
+      <p class="muted" style="margin-top:16px">Los premios pueden canjearse en el gimnasio o en tu local, llevando a los ganadores hasta tu tienda.</p>
+    </div>
+  </div></section>
+
+  <!-- 10. Contacto -->
+  <section class="slide" aria-label="Contacto"><div class="inner split">
+    <div>
+      <div class="kicker">Conversemos</div>
+      <h2 class="t2">Diseñemos juntos el primer reto de tu marca</h2>
+      <p class="lead">Escanea el código o escríbenos por WhatsApp. Te mostramos la app funcionando.</p>
+      <a class="btn wa-big" id="wa" href="#" target="_blank" rel="noopener" style="margin-top:20px">Escríbenos por WhatsApp</a>
+      <p class="lead" style="margin-top:22px">Mira la app: <span id="demo-url" style="color:var(--text)"></span></p>
+      <div class="brand-xl" style="margin:24px 0 0;font-size:1.2rem"><img src="../shared/icon.svg" alt="" style="width:36px;height:36px;border-radius:10px"><span>Kada<b>Meta</b> <span class="muted" style="font-weight:600">· Cada meta cuenta</span></span></div>
+    </div>
+    <div style="text-align:center">
+      <div class="qr-box" id="qr"></div>
+      <p class="muted small" style="margin-top:12px">Escanea para escribirnos por WhatsApp</p>
+    </div>
+  </div></section>
+</main>
+
+<nav class="controls" aria-label="Navegación">
+  <button class="nav-btn" id="prev" aria-label="Anterior"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="next" aria-label="Siguiente"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
+</nav>
+
+<script src="../shared/avatar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  const look = { skin: '#f1c27d', hair: 'corto', hairColor: '#3b2314', shirt: '#ff6b35', accessory: 'medalla' };
+  const bar = pct => `<div class="progress"><span style="width:${pct * 100}%"></span></div>`;
+  const logo = (s, f = 10) => `<span class="brand-ph" style="width:${s}px;height:${s}px;font-size:${f}px">TU<br>LOGO</span>`;
+  const header = `<div class="notch"></div><div class="m-row" style="justify-content:space-between"><div class="m-row"><span class="logo-box" style="width:24px;height:24px;border-radius:8px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg></span><strong style="font-size:.8rem">Gimnasio</strong></div><span class="dot-av" style="width:24px;height:24px">${Avatar.svg(look, 4, 24)}</span></div>`;
+  const prize = txt => `<div style="background:var(--surface-2);border-radius:10px;padding:8px;font-size:.72rem;margin:8px 0">🎁 Premio: <b style="color:var(--accent-2)">${txt}</b></div>`;
+  const retoCard = (done, big) => `<div class="m-card" style="border-left:4px solid var(--accent-2)"><div class="m-row">${logo(big ? 40 : 34)}<div class="grow"><strong style="font-size:.85rem">Octubre constante</strong><div class="muted" style="font-size:.68rem">Patrocinado por <b style="color:var(--text)">Tu marca</b></div></div>${done ? '<span class="badge ok" style="font-size:.58rem">¡Completado!</span>' : ''}</div>
+    <div style="font-size:.72rem;margin-top:8px">Entrena al menos 12 días este mes.</div>${prize('20% de descuento en tu tienda')}
+    <div class="m-row"><div class="grow">${bar(done ? 1 : .75)}</div><span style="font-size:.68rem">${done ? '12' : '9'}/12 días</span></div></div>`;
+  const teaser = `<div class="m-card" style="border-left:4px solid var(--accent-2)"><div class="m-row">${logo(34)}<div class="grow"><div style="font-size:.66rem;color:var(--ok);font-weight:700">🎁 ¡Tu premio está listo!</div><strong style="font-size:.82rem">Octubre constante</strong><div class="muted" style="font-size:.66rem">Premio de Tu marca</div></div></div><div class="m-row" style="margin-top:8px"><div class="grow">${bar(1)}</div><span style="font-size:.66rem">12/12</span></div></div>`;
+  const hero = `<div class="m-card m-row" style="background:linear-gradient(135deg,rgba(255,107,53,.2),transparent 60%),var(--surface)"><div style="border-radius:14px;overflow:hidden;line-height:0">${Avatar.svg(look, 4, 64)}</div><div class="grow"><div class="small muted">Hola,</div><strong>Mateo</strong><div style="color:var(--accent-2);font-weight:700;font-size:.72rem;margin:2px 0 6px">Nivel 4 · Guerrero</div>${bar(.6)}</div></div>`;
+  const celebrate = `<div style="text-align:center;padding-top:14px"><div style="font-size:2.6rem">🎁</div><strong style="font-size:1.05rem">¡Premio desbloqueado!</strong>
+    <div class="muted" style="font-size:.74rem;margin:6px 0 10px">Muestra tu código para recibir:<br><b style="color:var(--text)">20% de descuento en Tu marca</b></div>
+    <div style="display:flex;justify-content:center;margin-bottom:10px">${logo(56, 12)}</div><div class="claim-code" style="font-size:1.15rem;padding:6px">R-7K2P</div>
+    <div style="display:flex;justify-content:center;margin-top:10px"><div style="border-radius:14px;overflow:hidden;line-height:0">${Avatar.svg(look, 4, 70)}</div></div></div>`;
+  document.getElementById('ph-cover').innerHTML = header + hero + retoCard(true, true) + `<div class="muted" style="font-size:.66rem;text-align:center">Muestra este código para canjear</div><div class="claim-code" style="font-size:1.1rem;padding:6px">R-7K2P</div>`;
+  document.getElementById('ph-what').innerHTML = header + hero +
+    `<div class="m-card"><strong style="font-size:.85rem">Mi meta de octubre</strong><div class="muted" style="font-size:.72rem;margin:4px 0 8px">Bajar a 76 kg · te faltan 1.4 kg</div>${bar(.72)}</div>` + retoCard(false);
+  document.getElementById('ph-a').innerHTML = header + hero + teaser;
+  document.getElementById('ph-b').innerHTML = header + `<div style="font-weight:800;font-size:.95rem">Retos y premios</div>` + retoCard(false);
+  document.getElementById('ph-c').innerHTML = header + celebrate;
+
+  const wa = 'https://wa.me/593980781862?text=' + encodeURIComponent('Hola, quiero patrocinar retos en KadaMeta');
+  document.getElementById('wa').href = wa;
+  document.getElementById('demo-url').textContent = new URL('../', location.href).href.replace(/^https?:\/\//, '');
+  try { new QRCode(document.getElementById('qr'), { text: wa, width: 220, height: 220, colorDark: '#0e1014', colorLight: '#ffffff' }); }
+  catch (e) { document.getElementById('qr').style.display = 'none'; }
+})();
+</script>
+<script src="../shared/deck.js"></script>
+</body>
+</html>
