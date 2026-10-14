@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KadaMeta · Para socios</title>
+<meta name="description" content="Conoce la app de tu gimnasio: metas, reservas, avatar, retos con premios y beneficios de salud.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="../shared/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../shared/icon.svg">
+<meta name="theme-color" content="#0e1014">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KadaMeta Socios">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="../shared/styles.css">
+<link rel="stylesheet" href="../shared/deck.css">
+</head>
+<body>
+<div class="count" id="count">1 / 8</div>
+<button class="nav-btn fs" id="fs" aria-label="Pantalla completa" title="Pantalla completa"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+
+<main class="deck" id="deck">
+
+  <!-- 1. Portada -->
+  <section class="slide" aria-label="Portada"><div class="inner split">
+    <div>
+      <div class="brand-xl"><img src="../shared/icon.svg" alt=""><span>Kada<b>Meta</b></span></div>
+      <h1 class="t1">Tu gimnasio ahora tiene <span class="grad">su propia app</span>.</h1>
+      <p class="lead">Ponte una meta, mira tu avance cada día, reserva tus clases y gana premios por entrenar.</p>
+      <p class="lead" style="margin-top:14px"><strong style="color:var(--text)">Gratis para todos los socios.</strong></p>
+    </div>
+    <div class="phone"><div class="scr" id="ph-cover"></div></div>
+  </div></section>
+
+  <!-- 2. Metas y avance -->
+  <section class="slide" aria-label="Tu meta del mes"><div class="inner split">
+    <div class="phone"><div class="scr" id="ph-goal"></div></div>
+    <div>
+      <div class="kicker">Tu meta del mes</div>
+      <h2 class="t2">Mira cómo avanzas <span class="grad">día a día</span></h2>
+      <ul class="bul">
+        <li>Elige tu meta: bajar de peso, subir de peso o ganar fuerza</li>
+        <li>Registra tu peso y tus ejercicios en segundos</li>
+        <li>Ve tu progreso en un gráfico</li>
+        <li>Al cerrar el mes recibes tu reporte: dónde empezaste, dónde estás y cuánto te falta</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- 3. Reservas -->
+  <section class="slide" aria-label="Reserva tus clases"><div class="inner split">
+    <div>
+      <div class="kicker">Reservas</div>
+      <h2 class="t2">Reserva tus clases <span class="grad">desde el celular</span></h2>
+      <ul class="bul">
+        <li>Mira los horarios de toda la semana</li>
+        <li>Ve cuántos cupos quedan antes de ir</li>
+        <li>Reserva o cancela con un toque</li>
+        <li>Recibe un aviso cuando tu membresía esté por vencer</li>
+      </ul>
+    </div>
+    <div class="phone"><div class="scr" id="ph-book"></div></div>
+  </div></section>
+
+  <!-- 4. Avatar -->
+  <section class="slide" aria-label="Tu avatar" style="text-align:center"><div class="inner">
+    <div class="kicker">Tu avatar</div>
+    <h2 class="t2">Crea tu personaje.<br>Mientras más entrenas, <span class="grad">más fuerte se ve</span>.</h2>
+    <div class="evo" id="evo"></div>
+    <div class="pts"><span>Cada entrada al gym <b>+10</b></span><span>Cada registro <b>+5</b></span><span>Reto completado <b>+50</b></span><span>Meta del mes <b>+100</b></span></div>
+  </div></section>
+
+  <!-- 5. Retos -->
+  <section class="slide" aria-label="Retos con premios"><div class="inner split">
+    <div class="phone"><div class="scr" id="ph-reto"></div></div>
+    <div>
+      <div class="kicker">Retos con premios</div>
+      <h2 class="t2">Entrena, cumple el reto y <span class="grad">gana premios</span></h2>
+      <ul class="bul">
+        <li>Retos nuevos cada mes y un gran reto del año</li>
+        <li>Premios de marcas aliadas: descuentos, productos y más</li>
+        <li>Tu avance se cuenta solo, sin hacer nada extra</li>
+        <li>Reclamas tu premio con un código en recepción</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- 6. Beneficios de salud -->
+  <section class="slide" aria-label="Beneficios de salud"><div class="inner">
+    <div class="kicker">Beneficios de salud</div>
+    <h2 class="t2">Más que un gimnasio: <span class="grad">cuidamos tu salud</span></h2>
+    <div class="health">
+      <div class="card hcard">
+        <div class="hico">🥗</div>
+        <h3>Nutricionista aliada</h3>
+        <p class="muted">Porque tu meta también depende de lo que comes.</p>
+        <ul class="bul">
+          <li>Consulta con precio especial para socios</li>
+          <li>Un plan de alimentación pensado para tu meta</li>
+          <li>Consultas gratis como premio en los retos</li>
+        </ul>
+      </div>
+      <div class="card hcard">
+        <div class="hico">🧪</div>
+        <h3>Laboratorio clínico aliado</h3>
+        <p class="muted">Conoce cómo está tu cuerpo al empezar y cómo mejora.</p>
+        <ul class="bul">
+          <li>Chequeo básico con descuento: glucosa, colesterol, triglicéridos y hemograma</li>
+          <li>Repítelo a los 3–6 meses y compara tu antes y después</li>
+          <li>Chequeo gratis como premio del gran reto</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted small" style="margin-top:14px">Beneficios con los aliados de tu ciudad. Los resultados de tus exámenes son privados: los ves tú con tu médico o nutricionista.</p>
+  </div></section>
+
+  <!-- 7. Cómo empezar -->
+  <section class="slide" aria-label="Cómo empezar"><div class="inner">
+    <div class="kicker">Empieza hoy</div>
+    <h2 class="t2">Listo en 1 minuto</h2>
+    <div class="steps">
+      <div class="card step"><div class="n">1</div><h3>Escanea el código</h3><p>O abre el enlace que te da tu gimnasio.</p></div>
+      <div class="card step"><div class="n">2</div><h3>Entra con tu celular</h3><p>Usa tu número y el PIN que te dan en recepción.</p></div>
+      <div class="card step"><div class="n">3</div><h3>Agrégala a tu pantalla</h3><p>Queda como una app más. No ocupa espacio ni necesita tienda.</p></div>
+      <div class="card step"><div class="n">4</div><h3>Ponte tu primera meta</h3><p>Y empieza a sumar puntos desde tu primer día.</p></div>
+    </div>
+  </div></section>
+
+  <!-- 8. QR -->
+  <section class="slide" aria-label="Descárgala"><div class="inner split">
+    <div>
+      <div class="kicker">Tu app te espera</div>
+      <h2 class="t2">Escanea y <span class="grad">empieza a cumplir tus metas</span></h2>
+      <p class="lead">Pide tu PIN en recepción.</p>
+      <p class="lead" style="margin-top:18px">¿Solo quieres probarla? Entra con<br>Celular: <span class="cred">0991234567</span> · PIN: <span class="cred">1234</span></p>
+      <div class="brand-xl" style="margin:28px 0 0;font-size:1.2rem"><img src="../shared/icon.svg" alt="" style="width:36px;height:36px;border-radius:10px"><span>Kada<b>Meta</b> <span class="muted" style="font-weight:600">· Cada meta cuenta</span></span></div>
+    </div>
+    <div style="text-align:center">
+      <div class="qr-box" id="qr"></div>
+      <p class="muted small" id="qr-url" style="margin-top:12px;word-break:break-all"></p>
+    </div>
+  </div></section>
+</main>
+
+<nav class="controls" aria-label="Navegación">
+  <button class="nav-btn" id="prev" aria-label="Anterior"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="next" aria-label="Siguiente"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
+</nav>
+
+<script src="../shared/avatar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  const look = { skin: '#f1c27d', hair: 'corto', hairColor: '#3b2314', shirt: '#ff6b35', accessory: 'medalla' };
+  const ring = (pct, size) => { const r = 42, c = 2 * Math.PI * r; return `<svg viewBox="0 0 100 100" width="${size}" height="${size}"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c * pct} ${c}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">${Math.round(pct * 100)}%</text></svg>`; };
+  const bar = pct => `<div class="progress"><span style="width:${pct * 100}%"></span></div>`;
+  const header = `<div class="notch"></div><div class="m-row" style="justify-content:space-between"><div class="m-row"><span class="logo-box" style="width:26px;height:26px;border-radius:8px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg></span><strong style="font-size:.85rem">Tu Gimnasio</strong></div><span class="dot-av" style="width:26px;height:26px">${Avatar.svg(look, 4, 26)}</span></div>`;
+  const hero = size => `<div class="m-card m-row" style="background:linear-gradient(135deg,rgba(255,107,53,.2),transparent 60%),var(--surface)"><div style="border-radius:16px;overflow:hidden;line-height:0">${Avatar.svg(look, 4, size)}</div><div class="grow"><div class="small muted">Hola,</div><strong style="font-size:1.2rem">Mateo</strong><div style="color:var(--accent-2);font-weight:700;font-size:.76rem;margin:2px 0 6px">Nivel 4 · Guerrero</div>${bar(.6)}</div></div>`;
+  const meta = `<div class="m-card"><strong style="font-size:.88rem">Mi meta de octubre</strong><div class="m-row" style="margin-top:8px">${ring(.72, 74)}<div><strong style="font-size:.85rem">Bajar a 76 kg</strong><div class="muted" style="font-size:.72rem">Empezaste en 81 kg · hoy 77.4 kg</div><div style="font-size:.75rem;margin-top:4px">Te faltan <b>1.4 kg</b></div></div></div></div>`;
+
+  document.getElementById('ph-cover').innerHTML = header + hero(84) + meta +
+    `<div class="btn btn-primary" style="pointer-events:none;font-size:.85rem">＋ Registrar mi entrenamiento</div>`;
+
+  const pts = [81, 80.6, 80.4, 79.9, 79.5, 79.2, 78.6, 78.1, 77.8, 77.4];
+  const W = 240, H = 90, min = 75.5, max = 81.5;
+  const xy = pts.map((v, i) => `${(i * W / (pts.length - 1)).toFixed(1)},${((max - v) * H / (max - min)).toFixed(1)}`).join(' ');
+  const ty = ((max - 76) * H / (max - min)).toFixed(1);
+  document.getElementById('ph-goal').innerHTML = header +
+    `<div class="m-card"><div class="m-row" style="justify-content:space-between"><strong style="font-size:.9rem">Octubre 2026</strong><span class="badge info" style="font-size:.62rem">Faltan 18 días</span></div>
+      <div class="m-row" style="margin-top:8px">${ring(.72, 80)}<div><div class="muted" style="font-size:.68rem">Meta</div><strong style="font-size:.9rem">Bajar a 76 kg</strong><div style="font-size:.72rem;font-weight:700;margin-top:4px">¡Vas muy bien! 🔥</div></div></div>
+      <div class="m-row" style="justify-content:space-around;text-align:center;margin-top:10px"><div><b>81</b><div class="muted" style="font-size:.6rem">Inicio</div></div><div><b style="color:var(--accent)">77.4</b><div class="muted" style="font-size:.6rem">Hoy</div></div><div><b style="color:var(--ok)">76</b><div class="muted" style="font-size:.6rem">Meta</div></div></div></div>
+    <div class="m-card"><strong style="font-size:.8rem">Peso corporal</strong><svg viewBox="-6 -8 252 106" width="100%" style="margin-top:6px"><line x1="0" x2="${W}" y1="${ty}" y2="${ty}" stroke="var(--ok)" stroke-width="1.5" stroke-dasharray="4 4"/><text x="2" y="${ty - 4}" font-size="9" fill="var(--ok)" font-weight="700">Meta 76 kg</text><polyline points="${xy}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div style="background:var(--surface-2);border-radius:10px;padding:8px;font-size:.7rem;margin-top:6px">📈 A este ritmo cerrarás el mes en <b>75.6 kg</b></div></div>`;
+
+  const cls = [['06:00', 'Crossfit', 'Carlos', '#ff6b35', 4, 15, false], ['17:00', 'Pesas guiadas', 'Diego', '#c77dff', 6, 10, false], ['19:00', 'Funcional', 'Carlos', '#f7c548', 7, 20, true]];
+  document.getElementById('ph-book').innerHTML = header +
+    `<div style="font-weight:800;font-size:1rem">Reservar clase</div>
+    <div class="m-row" style="gap:6px">${['Hoy', 'Mañana', 'Mié', 'Jue'].map((d, i) => `<span class="chip ${i === 1 ? 'active' : ''}" style="font-size:.7rem;padding:6px 10px">${d}</span>`).join('')}</div>` +
+    cls.map(([t, n, c, col, left, cap, mine]) => `<div class="m-card" style="border-left:4px solid ${col};${mine ? 'background:linear-gradient(90deg,rgba(255,107,53,.12),transparent 70%),var(--surface)' : ''}"><div class="m-row"><b style="font-size:.9rem;min-width:44px">${t}</b><div class="grow"><strong style="font-size:.82rem">${n}</strong>${mine ? ' <span class="badge ok" style="font-size:.55rem">Tu reserva</span>' : ''}<div class="muted" style="font-size:.66rem">${c} · ${left} cupos</div><div style="margin-top:4px">${bar(1 - left / cap)}</div></div><span class="chip-s" style="background:${mine ? 'var(--surface-2)' : 'var(--accent)'};color:${mine ? 'var(--text)' : '#fff'};font-size:.62rem;padding:5px 8px">${mine ? 'Cancelar' : 'Reservar'}</span></div></div>`).join('');
+
+  document.getElementById('evo').innerHTML = [[1, 'Novato', 'ninguno', '0 pts'], [3, 'Atleta', 'banda', '250 pts'], [4, 'Guerrero', 'medalla', '500 pts'], [6, 'Leyenda', 'corona', '1400 pts']]
+    .map(([lv, n, acc, p]) => `<figure><div>${Avatar.svg({ ...look, accessory: acc }, lv, 150)}</div><figcaption>${n}<small>${p}</small></figcaption></figure>`).join('');
+
+  document.getElementById('ph-reto').innerHTML = header +
+    `<div style="font-weight:800;font-size:1.05rem">Retos y premios</div>
+    <div class="m-card" style="border-left:4px solid #f5c542;background:linear-gradient(135deg,rgba(245,197,66,.16),transparent 60%),var(--surface)"><div style="font-size:.68rem;color:var(--muted)">🏆 Gran reto del año</div><strong style="font-size:.85rem">Reto anual 2026</strong>
+      <div style="background:var(--surface-2);border-radius:10px;padding:8px;font-size:.72rem;margin:8px 0">🎁 Premio: <b style="color:var(--accent-2)">1 mes gratis + chequeo básico</b></div><div class="m-row"><div class="grow">${bar(.5)}</div><span style="font-size:.7rem">2/4 metas</span></div></div>
+    <div class="m-card" style="border-left:4px solid #3ddc97"><div class="m-row"><div class="grow"><strong style="font-size:.85rem">Octubre constante</strong><div class="muted" style="font-size:.68rem">Entrena 12 días este mes</div></div><span class="badge ok" style="font-size:.58rem">¡Completado!</span></div>
+      <div style="background:var(--surface-2);border-radius:10px;padding:8px;font-size:.72rem;margin:8px 0">🎁 Premio: <b style="color:var(--accent-2)">Consulta nutricional gratis</b></div>
+      <div class="muted" style="font-size:.66rem;text-align:center">Muestra este código en recepción</div><div class="claim-code" style="font-size:1.2rem;padding:6px">R-7K2P</div></div>`;
+
+  const demoUrl = new URL('../socio/', location.href).href;
+  document.getElementById('qr-url').textContent = demoUrl.replace(/^https?:\/\//, '');
+  try { new QRCode(document.getElementById('qr'), { text: demoUrl, width: 220, height: 220, colorDark: '#0e1014', colorLight: '#ffffff' }); }
+  catch (e) { document.getElementById('qr').style.display = 'none'; }
+})();
+</script>
+<script src="../shared/deck.js"></script>
+</body>
+</html>

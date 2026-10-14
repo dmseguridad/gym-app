@@ -119,3 +119,14 @@ html, body { height: 100%; overflow: hidden; }
 @media (max-width: 900px), (orientation: portrait) { .plans { grid-template-columns: 1fr; gap: 22px; } .perks { grid-template-columns: 1fr 1fr; } }
 @media print { .plans { grid-template-columns: repeat(3, 1fr); } .perks { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 560px) { .tri, .six, .steps, .flow { grid-template-columns: 1fr; } .tiles { grid-template-columns: 1fr 1fr; } }
+
+/* Beneficios de salud (nutricionista y laboratorio) */
+.health { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; }
+.hcard { padding: 24px; }
+.hico { font-size: 2.4rem; line-height: 1; }
+.hcard h3 { font-size: 1.35rem; margin: 10px 0 4px; }
+.hcard > p { margin: 0; }
+.hcard .bul { margin-top: 8px; }
+.hcard .bul li { font-size: 1rem; padding: 8px 0 8px 34px; }
+@media (max-width: 900px), (orientation: portrait) { .health { grid-template-columns: 1fr; } }
+@media print { .health { grid-template-columns: 1fr 1fr; } }
