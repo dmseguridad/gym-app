@@ -1,4 +1,4 @@
-const CACHE = 'gym-app-v7';
+const CACHE = 'gym-app-v8';
 const SHELL = [
   './', './admin/', './socio/', './presentacion/', './patrocinio/',
   './admin/app.js', './socio/app.js',
