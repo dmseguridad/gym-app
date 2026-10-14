@@ -35,3 +35,14 @@
   });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js', { updateViaCache: 'none' }).catch(() => {});
 })();
+
+/* Modo captura (?shot=N): muestra solo la diapositiva N, sin controles, para exportar imágenes */
+(function () {
+  const n = new URLSearchParams(location.search).get('shot');
+  if (n === null) return;
+  document.querySelectorAll('.controls, .fs, .count').forEach(e => { e.style.display = 'none'; });
+  const deck = document.getElementById('deck');
+  deck.style.scrollBehavior = 'auto';
+  const go = () => { deck.scrollLeft = (+n) * deck.clientWidth; };
+  go(); window.addEventListener('load', go);
+})();
