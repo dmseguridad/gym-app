@@ -120,13 +120,16 @@ html, body { height: 100%; overflow: hidden; }
 @media print { .plans { grid-template-columns: repeat(3, 1fr); } .perks { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 560px) { .tri, .six, .steps, .flow { grid-template-columns: 1fr; } .tiles { grid-template-columns: 1fr 1fr; } }
 
-/* Beneficios de salud (nutricionista y laboratorio) */
-.health { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; }
-.hcard { padding: 24px; }
-.hico { font-size: 2.4rem; line-height: 1; }
-.hcard h3 { font-size: 1.35rem; margin: 10px 0 4px; }
-.hcard > p { margin: 0; }
-.hcard .bul { margin-top: 8px; }
-.hcard .bul li { font-size: 1rem; padding: 8px 0 8px 34px; }
-@media (max-width: 900px), (orientation: portrait) { .health { grid-template-columns: 1fr; } }
-@media print { .health { grid-template-columns: 1fr 1fr; } }
+/* Aliados en salud: gimnasio + nutricionista + laboratorio como un solo equipo */
+.allies { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: stretch; margin-top: 26px; }
+.ally { padding: 26px 22px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.ally.main { border: 2px solid var(--accent); background: linear-gradient(160deg, rgba(255, 107, 53, .12), transparent 60%), var(--surface); }
+.ally .ico { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; font-size: 2.1rem; background: var(--surface-2); margin-bottom: 14px; }
+.ally .role { color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .74rem; }
+.ally h3 { font-size: 1.25rem; margin: 6px 0 8px; }
+.ally p { margin: 0; color: var(--muted); font-size: 1rem; }
+.plus { display: grid; place-items: center; font-size: 1.8rem; font-weight: 900; color: var(--accent-2); }
+.team-note { display: flex; gap: 12px; align-items: center; margin-top: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px; font-size: 1.05rem; }
+.team-note strong { color: var(--text); }
+@media (max-width: 900px), (orientation: portrait) { .allies { grid-template-columns: 1fr; } .plus { padding: 2px 0; } }
+@media print { .allies { grid-template-columns: 1fr auto 1fr auto 1fr; } }
