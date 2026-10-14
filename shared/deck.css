@@ -89,6 +89,22 @@ html, body { height: 100%; overflow: hidden; }
   .steps { grid-template-columns: 1fr 1fr; }
 }
 /* Versión PDF / impresión: una diapositiva por página horizontal */
+/* Planes y oferta de lanzamiento */
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px; }
+.plan { padding: 22px; text-align: center; position: relative; }
+.plan.star { border: 2px solid var(--accent); background: linear-gradient(160deg, rgba(255, 107, 53, .14), transparent 55%), var(--surface); }
+.plan .tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; border-radius: 999px; padding: 4px 12px; font-size: .75rem; font-weight: 800; white-space: nowrap; }
+.plan h3 { margin: 0; font-size: 1.3rem; }
+.plan .who { color: var(--muted); font-size: .92rem; margin: 4px 0 12px; }
+.plan .old { color: var(--muted); text-decoration: line-through; font-size: 1.05rem; font-weight: 600; }
+.plan .new { font-size: 2.6rem; font-weight: 900; letter-spacing: -.03em; line-height: 1; margin: 4px 0; }
+.plan .new small { font-size: 1rem; font-weight: 600; color: var(--muted); }
+.plan .note { color: var(--ok); font-weight: 700; font-size: .85rem; }
+.launch { display: flex; gap: 12px; align-items: center; margin-top: 18px; background: rgba(61, 220, 151, .1); border: 1px solid rgba(61, 220, 151, .35); color: var(--text); border-radius: 16px; padding: 14px 18px; font-size: 1.02rem; }
+.launch strong { color: var(--ok); }
+.perks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+.perks div { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; font-weight: 600; font-size: .95rem; }
+.perks div span { display: block; font-size: 1.4rem; margin-bottom: 4px; }
 @page { size: 1180px 820px; margin: 0; }
 @media print {
   html, body { height: auto; overflow: visible; background: var(--bg); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -100,4 +116,6 @@ html, body { height: 100%; overflow: hidden; }
   .steps { grid-template-columns: repeat(4, 1fr); }
   .controls, .fs, .count { display: none !important; }
 }
+@media (max-width: 900px), (orientation: portrait) { .plans { grid-template-columns: 1fr; gap: 22px; } .perks { grid-template-columns: 1fr 1fr; } }
+@media print { .plans { grid-template-columns: repeat(3, 1fr); } .perks { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 560px) { .tri, .six, .steps, .flow { grid-template-columns: 1fr; } .tiles { grid-template-columns: 1fr 1fr; } }
