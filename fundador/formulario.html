@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Configura tu gimnasio · KadaMeta</title>
+<meta name="description" content="Envía los datos de tu gimnasio para configurar KadaMeta.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../shared/icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0e1014">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="../shared/styles.css">
+<style>
+  [hidden] { display: none !important; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 22px 16px 120px; }
+  .top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .top img { width: 44px; height: 44px; border-radius: 12px; }
+  .top b { color: var(--accent); }
+  .intro { color: var(--muted); margin-bottom: 18px; }
+  section.card { margin-top: 14px; }
+  section.card h2 { display: flex; gap: 10px; align-items: center; }
+  section.card h2 .n { background: var(--accent); color: #fff; width: 26px; height: 26px; border-radius: 8px; display: inline-grid; place-items: center; font-size: .85rem; flex: none; }
+  .help { color: var(--muted); font-size: .86rem; margin: -2px 0 12px; }
+  .rows .r { display: grid; gap: 8px; align-items: end; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+  .rows .r:last-child { border-bottom: 0; }
+  .rows.planes .r { grid-template-columns: 2fr 1fr 1fr 36px; }
+  .rows.clases .r { grid-template-columns: 1.4fr 1.4fr .9fr 1.2fr .7fr 36px; }
+  .rows.personal .r { grid-template-columns: 1.6fr 1.2fr 1.2fr 36px; }
+  .rows input { min-height: 40px; padding: 8px 10px; }
+  .rows .lbl { display: block; margin-bottom: 4px; font-size: .72rem; }
+  .opt-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .opt-card { border: 2px solid var(--border); border-radius: 14px; padding: 12px; cursor: pointer; display: block; }
+  .opt-card input { position: absolute; opacity: 0; pointer-events: none; }
+  .opt-card:has(input:checked) { border-color: var(--accent); background: rgba(255, 107, 53, .1); }
+  .opt-card:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt-card b { display: block; font-size: 1.05rem; }
+  .opt-card .pr { color: var(--accent-2); font-weight: 800; }
+  .opt-card .muted { font-size: .8rem; }
+  .radios { display: flex; flex-direction: column; gap: 10px; }
+  .radios label, .checks label { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; cursor: pointer; }
+  .radios input, .checks input { width: 18px; height: 18px; min-height: 0; margin-top: 2px; accent-color: var(--accent); flex: none; }
+  .checks { display: flex; flex-direction: column; gap: 10px; }
+  .err { color: var(--bad); font-size: .85rem; margin-top: 6px; display: none; }
+  .err.on { display: block; }
+  .send-bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(14, 16, 20, .95); border-top: 1px solid var(--border); display: flex; justify-content: center; z-index: 10; }
+  .send-bar .btn { max-width: 720px; width: 100%; background: #25d366; border-color: #25d366; color: #062b14; min-height: 54px; font-size: 1.05rem; }
+  .done { text-align: center; }
+  .done pre { text-align: left; white-space: pre-wrap; background: var(--surface-2); border-radius: 12px; padding: 14px; font-size: .82rem; max-height: 260px; overflow: auto; }
+  @media (max-width: 600px) {
+    .opt-cards { grid-template-columns: 1fr; }
+    .rows.planes .r { grid-template-columns: 1fr 1fr 36px; }
+    .rows.planes .r .w { grid-column: 1 / -1; }
+    .rows.clases .r, .rows.personal .r { grid-template-columns: 1fr 1fr; }
+    .rows.clases .r .rm, .rows.personal .r .rm { grid-column: 2; justify-self: end; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><img src="../shared/icon.svg" alt=""><h1 style="margin:0">Configura tu gimnasio en Kada<b>Meta</b></h1></div>
+  <p class="intro">Llena estos datos y nosotros dejamos todo listo. Al final se enviarán por WhatsApp. Puedes cerrar y continuar después: lo que escribas se guarda en este celular.</p>
+
+  <form id="f" novalidate>
+    <section class="card"><h2><span class="n">1</span>Tu gimnasio</h2>
+      <div class="form-grid">
+        <div class="field"><label for="gym">Nombre del gimnasio *</label><input id="gym" name="gym" required></div>
+        <div class="field"><label for="ciudad">Ciudad y dirección *</label><input id="ciudad" name="ciudad" required></div>
+        <div class="field"><label for="resp">Responsable *</label><input id="resp" name="resp" required></div>
+        <div class="field"><label for="cel">Celular *</label><input id="cel" name="cel" inputmode="tel" placeholder="09XXXXXXXX" required></div>
+        <div class="field"><label for="mail">Correo</label><input id="mail" name="mail" inputmode="email"></div>
+        <div class="field"><label for="ruc">RUC (para tu factura)</label><input id="ruc" name="ruc" inputmode="numeric"></div>
+        <div class="field" style="grid-column:1/-1"><label for="horario">Horario de atención</label><input id="horario" name="horario" placeholder="Lun a Vie 05:00–22:00 · Sáb 07:00–14:00"></div>
+      </div>
+      <div class="err" id="e1">Completa los campos marcados con *.</div>
+    </section>
+
+    <section class="card"><h2><span class="n">2</span>Tu plan KadaMeta</h2>
+      <p class="help">Precio de Gimnasio Fundador: 50% de descuento por 12 meses.</p>
+      <div class="opt-cards">
+        <label class="opt-card"><input type="radio" name="plan" value="Básico ($40/mes)"><b>Básico</b><span class="pr">$40/mes</span><div class="muted">Hasta 80 socios · normal $80</div></label>
+        <label class="opt-card"><input type="radio" name="plan" value="Pro ($60/mes)"><b>Pro</b><span class="pr">$60/mes</span><div class="muted">Hasta 200 socios · normal $120</div></label>
+        <label class="opt-card"><input type="radio" name="plan" value="Premium ($90/mes)"><b>Premium</b><span class="pr">$90/mes</span><div class="muted">Más de 200 o varias sedes · normal $180</div></label>
+      </div>
+      <div class="form-grid" style="margin-top:12px">
+        <div class="field"><label for="pago">Forma de pago</label><select id="pago" name="pago"><option>Mensual</option><option>Anual (paga 10, usa 12)</option></select></div>
+        <div class="field"><label for="nsocios">Socios activos (aprox.) *</label><input id="nsocios" name="nsocios" type="number" min="1" inputmode="numeric" required></div>
+      </div>
+      <div class="err" id="e2">Elige un plan e indica cuántos socios activos tienes.</div>
+    </section>
+
+    <section class="card"><h2><span class="n">3</span>Tus planes de membresía</h2>
+      <p class="help">Lo que cobras a tus socios. Ej.: Mensual $30 por 30 días.</p>
+      <div class="rows planes" id="planes"></div>
+      <button type="button" class="btn btn-sm" data-add="planes">＋ Agregar plan</button>
+      <div class="err" id="e3">Agrega al menos un plan con nombre y precio.</div>
+    </section>
+
+    <section class="card"><h2><span class="n">4</span>Clases y horarios</h2>
+      <p class="help">Si no tienes clases grupales, puedes dejar esto vacío.</p>
+      <div class="rows clases" id="clases"></div>
+      <button type="button" class="btn btn-sm" data-add="clases">＋ Agregar clase</button>
+    </section>
+
+    <section class="card"><h2><span class="n">5</span>Tu equipo</h2>
+      <p class="help">Entrenadores, instructores y recepción.</p>
+      <div class="rows personal" id="personal"></div>
+      <button type="button" class="btn btn-sm" data-add="personal">＋ Agregar persona</button>
+    </section>
+
+    <section class="card"><h2><span class="n">6</span>Tus socios</h2>
+      <p class="help">Para cargarlos necesitamos: nombre, celular, plan y fecha de vencimiento de cada uno.</p>
+      <div class="radios">
+        <label><input type="radio" name="socios" value="Te envío un Excel" checked> Te envío un Excel o una lista por WhatsApp</label>
+        <label><input type="radio" name="socios" value="Te envío fotos de mi registro"> Te envío fotos de mi cuaderno o registro</label>
+        <label><input type="radio" name="socios" value="Los cargamos juntos en el gimnasio"> Prefiero que los carguemos juntos en el gimnasio</label>
+      </div>
+    </section>
+
+    <section class="card"><h2><span class="n">7</span>Tu marca</h2>
+      <div class="form-grid">
+        <div class="field"><label for="color">Color principal de tu gimnasio</label><input id="color" name="color" type="color" value="#ff6b35"></div>
+        <div class="field"><label>Logo</label><p class="help" style="margin:6px 0 0">Envíanos tu logo por WhatsApp después de mandar este formulario.</p></div>
+      </div>
+    </section>
+
+    <section class="card"><h2><span class="n">8</span>Extras</h2>
+      <div class="checks">
+        <label><input type="checkbox" name="liga" checked> Quiero participar en la Liga KadaMeta (ranking entre gimnasios)</label>
+        <label><input type="checkbox" name="retos" checked> Quiero retos con premios de patrocinadores</label>
+        <label><input type="checkbox" name="aliados" checked> Quiero que mis socios accedan a los aliados en salud</label>
+      </div>
+    </section>
+
+    <section class="card"><h2><span class="n">9</span>Confirmación</h2>
+      <div class="checks">
+        <label><input type="checkbox" name="consent" id="consent"> Confirmo que tengo autorización de mis socios para compartir sus datos con KadaMeta, únicamente para configurar el servicio.</label>
+      </div>
+      <div class="err" id="e9">Necesitamos esta confirmación para cargar los datos de tus socios.</div>
+    </section>
+  </form>
+
+  <section class="card done" id="done" hidden>
+    <div style="font-size:3rem">✅</div>
+    <h2 style="justify-content:center">¡Listo! Se abrió WhatsApp con tus datos</h2>
+    <p class="muted">Solo toca <b>Enviar</b> en WhatsApp. Después mándanos tu logo.</p>
+    <p class="muted small">¿No se abrió WhatsApp? Copia el texto y envíalo al 098 078 1862.</p>
+    <div class="row" style="justify-content:center;gap:10px;margin:12px 0"><button class="btn" id="copy">Copiar texto</button><a class="btn btn-primary" id="reopen" target="_blank" rel="noopener">Abrir WhatsApp otra vez</a></div>
+    <pre id="preview"></pre>
+    <button class="btn btn-sm" id="edit" style="margin-top:12px">Volver al formulario</button>
+  </section>
+</div>
+
+<div class="send-bar" id="bar"><button class="btn" id="send" type="button">Enviar por WhatsApp</button></div>
+
+<script>
+(function () {
+  const WA = '593980781862';
+  const KEY = 'kadameta_formulario_borrador';
+  const SPEC = {
+    planes: [['nombre', 'Plan', 'Mensual', 'w'], ['precio', 'Precio $', '30', '', 'decimal'], ['dias', 'Días', '30', '', 'numeric']],
+    clases: [['clase', 'Clase', 'Spinning'], ['dias', 'Días', 'Lun, Mié, Vie'], ['hora', 'Hora', '18:00'], ['instructor', 'Instructor', 'Carlos'], ['cupos', 'Cupos', '15', '', 'numeric']],
+    personal: [['nombre', 'Nombre', 'Carlos Andrade'], ['cargo', 'Cargo', 'Entrenador'], ['cel', 'Celular', '09XXXXXXXX', '', 'tel']],
+  };
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  function addRow(kind, data = {}) {
+    const box = document.getElementById(kind);
+    const r = document.createElement('div'); r.className = 'r';
+    r.innerHTML = SPEC[kind].map(([k, l, ph, cls, im]) => `<div class="${cls || ''}"><span class="lbl">${l}</span><input data-f="${k}" placeholder="${ph}" value="${esc(data[k])}" ${im ? `inputmode="${im}"` : ''} aria-label="${l}"></div>`).join('')
+      + `<button type="button" class="icon-btn rm" aria-label="Quitar fila" title="Quitar">✕</button>`;
+    r.querySelector('.rm').addEventListener('click', () => { r.remove(); save(); });
+    r.addEventListener('input', save);
+    box.appendChild(r);
+  }
+  const rowsOf = kind => [...document.querySelectorAll(`#${kind} .r`)].map(r => Object.fromEntries([...r.querySelectorAll('input')].map(i => [i.dataset.f, i.value.trim()]))).filter(o => Object.values(o).some(Boolean));
+
+  const form = document.getElementById('f');
+  function collect() {
+    const fd = new FormData(form);
+    const v = Object.fromEntries(fd.entries());
+    ['liga', 'retos', 'aliados', 'consent'].forEach(k => { v[k] = !!form.elements[k].checked; });
+    v.planes = rowsOf('planes'); v.clases = rowsOf('clases'); v.personal = rowsOf('personal');
+    return v;
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(collect())); } catch (e) { /* sin almacenamiento */ } }
+  function restore() {
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { d = null; }
+    if (!d) { addRow('planes', { nombre: '', precio: '', dias: '30' }); addRow('clases'); addRow('personal'); return; }
+    Object.entries(d).forEach(([k, val]) => {
+      const el = form.elements[k];
+      if (!el || Array.isArray(val)) return;
+      if (el instanceof RadioNodeList) { [...el].forEach(x => { x.checked = x.value === val; }); }
+      else if (el.type === 'checkbox') el.checked = !!val;
+      else el.value = val;
+    });
+    (d.planes && d.planes.length ? d.planes : [{}]).forEach(x => addRow('planes', x));
+    (d.clases && d.clases.length ? d.clases : [{}]).forEach(x => addRow('clases', x));
+    (d.personal && d.personal.length ? d.personal : [{}]).forEach(x => addRow('personal', x));
+  }
+  document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => { addRow(b.dataset.add); save(); }));
+  form.addEventListener('input', save); form.addEventListener('change', save);
+  restore();
+
+  function validate(v) {
+    const show = (id, bad) => { document.getElementById(id).classList.toggle('on', bad); return bad; };
+    const bad = [
+      show('e1', !v.gym || !v.ciudad || !v.resp || !v.cel),
+      show('e2', !v.plan || !v.nsocios),
+      show('e3', !v.planes.some(p => p.nombre && p.precio)),
+      show('e9', !v.consent),
+    ];
+    const first = document.querySelector('.err.on');
+    if (first) first.closest('section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return !bad.some(Boolean);
+  }
+  function message(v) {
+    const L = [];
+    L.push('🏋️ *CONFIGURACIÓN KADAMETA*', '');
+    L.push('*1. Gimnasio*', `Nombre: ${v.gym}`, `Ciudad/dirección: ${v.ciudad}`, `Responsable: ${v.resp}`, `Celular: ${v.cel}`);
+    if (v.mail) L.push(`Correo: ${v.mail}`);
+    if (v.ruc) L.push(`RUC: ${v.ruc}`);
+    if (v.horario) L.push(`Horario: ${v.horario}`);
+    L.push('', '*2. Plan KadaMeta*', `Plan: ${v.plan}`, `Pago: ${v.pago}`, `Socios activos: ${v.nsocios}`);
+    L.push('', '*3. Planes de membresía*', ...v.planes.map(p => `• ${p.nombre || '—'}: $${p.precio || '—'} por ${p.dias || '—'} días`));
+    if (v.clases.length) L.push('', '*4. Clases*', ...v.clases.map(c => `• ${c.clase || '—'} · ${c.dias || '—'} · ${c.hora || '—'} · ${c.instructor || '—'} · ${c.cupos || '—'} cupos`));
+    if (v.personal.length) L.push('', '*5. Equipo*', ...v.personal.map(p => `• ${p.nombre || '—'} · ${p.cargo || '—'}${p.cel ? ' · ' + p.cel : ''}`));
+    L.push('', '*6. Socios*', v.socios);
+    L.push('', '*7. Marca*', `Color: ${v.color}`, 'Logo: lo envío por WhatsApp');
+    L.push('', '*8. Extras*', `Liga KadaMeta: ${v.liga ? 'Sí' : 'No'}`, `Retos con patrocinadores: ${v.retos ? 'Sí' : 'No'}`, `Aliados en salud: ${v.aliados ? 'Sí' : 'No'}`);
+    L.push('', '✅ Confirmo que tengo autorización de mis socios para compartir sus datos con KadaMeta.');
+    return L.join('\n');
+  }
+
+  let lastUrl = '', lastText = '';
+  document.getElementById('send').addEventListener('click', () => {
+    const v = collect();
+    if (!validate(v)) return;
+    lastText = message(v);
+    lastUrl = `https://wa.me/${WA}?text=${encodeURIComponent(lastText)}`;
+    document.getElementById('preview').textContent = lastText;
+    document.getElementById('reopen').href = lastUrl;
+    form.hidden = true; document.getElementById('bar').hidden = true; document.getElementById('done').hidden = false;
+    window.scrollTo(0, 0);
+    window.open(lastUrl, '_blank', 'noopener');
+  });
+  document.getElementById('copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(lastText); UI.toast('Texto copiado'); }
+    catch (e) { UI.toast('No se pudo copiar; selecciona el texto manualmente', 'bad'); }
+  });
+  document.getElementById('edit').addEventListener('click', () => { form.hidden = false; document.getElementById('bar').hidden = false; document.getElementById('done').hidden = true; });
+})();
+</script>
+<script>
+  // Aviso breve reutilizando el estilo de la app
+  window.UI = { toast(msg, type = 'ok') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); } };
+</script>
+</body>
+</html>
