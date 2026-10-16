@@ -1,8 +1,8 @@
-const CACHE = 'gym-app-v14';
+const CACHE = 'gym-app-v15';
 const SHELL = [
   './', './admin/', './socio/', './presentacion/', './patrocinio/', './para-socios/',
   './admin/app.js', './socio/app.js',
-  './shared/styles.css', './shared/store.js', './shared/ui.js', './shared/avatar.js', './shared/icon.svg', './shared/deck.css', './shared/deck.js',
+  './shared/styles.css', './shared/store.js', './shared/ui.js', './shared/avatar.js', './shared/icon.svg', './shared/deck.css', './shared/deck.js', './shared/billing.js',
 ];
 
 self.addEventListener('install', e => {

@@ -9,7 +9,7 @@
   const NAV = [
     ['inicio', 'Inicio', 'home'], ['socios', 'Socios', 'users'], ['clases', 'Clases', 'calendar'],
     ['personal', 'Personal', 'badge'], ['asistencia', 'Asistencia', 'check'], ['retos', 'Retos', 'trophy'], ['reportes', 'Reportes', 'chart'],
-    ['ajustes', 'Ajustes', 'settings'],
+    ['suscripcion', 'Mi suscripción', 'cash'], ['ajustes', 'Ajustes', 'settings'],
   ];
   const FILTERS = { todos: 'Todos', activo: 'Activos', por_vencer: 'Por vencer', vencido: 'Vencidos' };
   const METHODS = ['Efectivo', 'Transferencia', 'DeUna', 'Tarjeta'];
@@ -49,9 +49,9 @@
           <span class="hide-sm" style="margin-top:12px">${UI.poweredBy()}</span>
         </nav>
       </aside>
-      <main class="main" id="main">${PAGES[page]()}</main>
+      <main class="main" id="main">${subBlocked(page) ? Billing.blockedPage() : (page === 'suscripcion' ? '' : Billing.banner(SUB_ID)) + PAGES[page]()}</main>
     </div>`;
-    if (AFTER[page]) AFTER[page]();
+    if (AFTER[page] && !subBlocked(page)) AFTER[page]();
     if (render.lastPage === page) window.scrollTo(0, scroll);
     render.lastPage = page;
   }
@@ -67,8 +67,14 @@
   }
 
   /* ---------------- Páginas ---------------- */
+  /* Suscripción del gimnasio a KadaMeta: pantalla y cobros comunes en shared/billing.js */
+  const SUB_ID = Billing.DEMO.gym;
+  // Si la suscripción está pausada, solo se puede entrar a "Mi suscripción" para pagar
+  const subBlocked = page => page !== 'suscripcion' && Billing.statusOf(Billing.client(SUB_ID)) === 'suspendido';
+
   const AFTER = {};
   const PAGES = {
+    suscripcion: () => Billing.subPage(SUB_ID),
     inicio() {
       const d = GymDB.dashboard();
       const diff = d.revPrev ? Math.round((d.rev - d.revPrev) / d.revPrev * 100) : null;
@@ -758,6 +764,14 @@ Premio: ${c.reward}
     FORMS[f.dataset.form](UI.formData(f), f);
   });
   window.addEventListener('hashchange', () => { UI.closeModal(); render(); });
+  // Cambios en la suscripción (pago con tarjeta, aprobación del dueño de KadaMeta, cobro automático)
+  window.addEventListener('billing-change', e => {
+    const d = e.detail || {};
+    if (sessionStorage.getItem(SESSION) === '1' && !UI.isModalOpen()) render();
+    if (!d.remote || d.replay || !d.payment || d.payment.clientId !== SUB_ID) return;
+    if (d.payment.status === 'aprobado') UI.toast(`✅ Pago de tu suscripción aprobado (${U.money(d.payment.amount)}). ¡Gracias!`);
+    if (d.payment.status === 'rechazado') UI.toast('⚠️ Tu comprobante fue rechazado. Revisa y súbelo de nuevo.', 'warn');
+  });
   GymDB.onChange(() => { if (!UI.isModalOpen()) render(); });
   render();
 })();
